@@ -12,13 +12,13 @@
                     <div class="col-lg-12">
                         <div class="row mb-2" >
                             <div class="col-lg-12" >
-                                <button class="btn btn-primary ladda-button i-add" id="create-data" data-style="expand-right"><span class="ladda-label">Add Table</span></button> 
+                                <button class="btn btn-primary ladda-button i-add" id="create-data" data-style="expand-right" data-url = '' data-prefix = '{{$prefix}}' data-type = "create"><span class="ladda-label">Add Table</span></button> 
                             </div>
                         </div>
-                        
+                    
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Table Data</h4>
+                                <h4 class="card-title">{{createHeaderTitle($prefix)}}</h4>
                                 <div class="table-responsive">
                                     <table class="table mb-0">
                                         <thead>
@@ -30,10 +30,10 @@
                                                 <th>Created At</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="tableRecord">
                                             @forelse ($records as $record)
                                                 <tr>
-                                                    <th scope="row"><button class="btn btn-danger i-design">Design</button> <button class="btn btn-success i-edit">Edit</button></th>
+                                                    <th scope="row"><button class="btn btn-danger i-design">Design</button> <button class="btn btn-success i-edit" data-id="{{encryptHelper($record->id)}}" onclick="buildTable(this)">Build</button> </th>
                                                     <td>{{$record->id}}</td>
                                                     <td>{{$record->table_id}}</td>
                                                     <td>{{$record->table_name}}</td>
@@ -77,6 +77,31 @@
 @section('script')
     <script>
         const prefix = "{{$prefix}}";
-         initializingTL.TLloading()
+        $(document).on('click','.m-confirm-submit',function(e){
+            let code = $(this).data('code');
+            
+           
+        })
+
+        function buildTable(ctrl){
+            let code = $(ctrl).attr('data-id');
+            let data ={
+                code : code,
+            }
+            $.ajax({
+                type: "POST",
+                url: `${prefix}/build-table`,
+                data:data,
+                success: function (response) {
+                   if(response.status == 'success'){
+                        notyf.success(response.msg);
+                    }else{
+                        notyf.error(response.msg);
+                    }
+                }
+            });
+        }
+
+        // initializingTL.TLSelect2LiveSearch('system/select2-live-search','table_names')
     </script>
 @endsection

@@ -119,14 +119,14 @@
                 <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="ti-bell"></i>
-                    <span class="badge text-bg-danger rounded-pill">3</span>
+                    <span class="badge text-bg-danger rounded-pill" id="totalNotifi">32</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                     aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h5 class="m-0"> Notifications (258) </h5>
+                                <h5 class="m-0"> Notifications (2528) </h5>
                             </div>
                         </div>
                     </div>

@@ -17,3 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'menu_group'],function(){  
+            Route::controller(App\Http\Controllers\MenuGroupController::class)->group(function(){
+                Route::get('','index');
+                Route::post('/create-data','createData');
+                Route::post('/delete-table','build');
+                Route::post('/edit-data','build');
+                Route::post('/submit-data','submitData');
+            });
+        });
