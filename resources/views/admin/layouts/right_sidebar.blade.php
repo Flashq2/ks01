@@ -40,7 +40,6 @@
 
         <div class="p-4">
             <div class="mb-2">
-                <img src="assets/images/layouts/layout-1.jpg" class="img-thumbnail" alt="">
             </div>
             <div class="form-check form-switch mb-3">
                 <input type="checkbox" class="form-check-input theme-choice" id="light-mode-switch" checked />
@@ -48,7 +47,6 @@
             </div>
 
             <div class="mb-2">
-                <img src="assets/images/layouts/layout-2.jpg" class="img-thumbnail" alt="">
             </div>
             <div class="form-check form-switch mb-3">
                 <input type="checkbox" class="form-check-input theme-choice" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css" />
@@ -56,7 +54,6 @@
             </div>
 
             <div class="mb-2">
-                <img src="assets/images/layouts/layout-3.jpg" class="img-thumbnail" alt="">
             </div>
             <div class="form-check form-switch mb-5">
                 <input type="checkbox" class="form-check-input theme-choice" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css" />

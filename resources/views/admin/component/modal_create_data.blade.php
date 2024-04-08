@@ -12,7 +12,6 @@
         </div>
         <div class="modal-body">
             <form class="form" id="formData">
-
                 <input type="hidden" name="is_code" id="is_code" value="{{ isset($record) ? $record[$primary_key] : ''}}">
                 <div class="row">
                     <?php $validate_icon = '<small style="color: red">*</small>'?>
@@ -22,9 +21,9 @@
                                 <div class="col-lg-6">
                                     <div class="mb-10">
                                         <label for="{{ $item->filed_name }}" class="required form-label">{{ createHeaderTitle($item->filed_name) }} {!!$item->on_validate == 'yes' ? $validate_icon : ''!!}</label>
-                                        <select class="form-select custome_select2" data-control="select2"
-                                            data-placeholder="Select an option" name="{{ $item->filed_name }}"
-                                            id="{{ $item->filed_name }}" data-dropdown-parent="#m-modal" >
+                                        <select class="form-select select2-custome" data-select2-id="{{ $item->filed_name }}" tabindex="-1" aria-hidden="true"
+                                            data-placeholder="Select {{ createHeaderTitle($item->filed_name) }}" name="{{ $item->filed_name }}"
+                                            id="{{ $item->filed_name }}" >
                                             <option {{(isset($record['inactived'])  &&  $record['inactived'] == 'no' ? 'selected' : '')}}  value="no">No</option>
                                             <option {{(isset($record['inactived'])  &&  $record['inactived'] == 'yes' ? 'selected' : '')}}  value="yes">Yes</option>
                                         </select>
@@ -46,18 +45,15 @@
                             <div class="col-lg-6">
                                 <div class="mb-10">
                                     <label for="{{ $item->filed_name }}" class="required form-label">{{ createHeaderTitle($item->filed_name) }} {!!$item->on_validate == 'yes' ? $validate_icon : ''!!}</label>
-                                <select class="form-select select2-hidden-accessible" data-select2-id="{{ $item->filed_name }}" tabindex="-1" aria-hidden="true"
+                                <select class="form-select select2-custome" data-select2-id="{{ $item->filed_name }}" tabindex="-1" aria-hidden="true"
                                     data-placeholder="Select {{ createHeaderTitle($item->filed_name) }}" name="{{ $item->filed_name }}"
-                                    data-table = "{{$item->table_relate}}"
-                                    data-primary_field = "{{$item->table_code_relate}}"
-                                    data-description_field = "{{$item->table_description_relate}}"
                                     id="{{ $item->filed_name }}">
                                     <?php
-                                             $data_record = \DB::table($item->table_relate)->get();
-                                             $primary = $item->table_code_relate;
-                                             $description = $item->table_description_relate
+                                        $data_record = \DB::table($item->table_relate)->get();
+                                        $primary = $item->table_code_relate;
+                                        $description = $item->table_description_relate
                                     ?>
-                                         @foreach ($data_record as $data)
+                                    @foreach ($data_record as $data)
                                              <option value="{{$data->$primary}}" {{(isset($record[$data->$primary])  &&  $record[$data->$primary] == $data->$primary ? 'selected' : '')}}>{{$data->$description}}</option>
                                          @endforeach
                                 </select>

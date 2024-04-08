@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\MainSystem\system;
-use App\Models\NotificationModel;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\TablesModel;
 use Exception;
+use App\MainSystem\system;
+use App\Models\TablesModel;
+use Illuminate\Http\Request;
+use App\Models\UseSetupModel;
+use App\Models\NotificationModel;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 class SystemController extends Controller
@@ -105,6 +107,46 @@ class SystemController extends Controller
             $records = NotificationModel::where('is_read','no')->orderBy('created_at')->limit(20)->get();
             $view = view('admin.component.notification_list',compact('records'))->render() ;    
             return response()->json(['status' => 'success' ,'view' => $view]);
+        }catch(Exception $ex){
+            return response()->json(['status' => 'warning', 'msg' => $ex]) ;
+        }
+    }
+
+    public function getTelegramID(Request $request){
+        try{
+            $bot_api = "https://api.telegram.org";
+            $telegram_token = env('TELEGRAM_ERROR_TOKEN');
+            $ch = curl_init();
+            $apiUri = sprintf('%s/bot%s/%s', $bot_api, $telegram_token, 'getUpdates?offset=-1');
+            $headers = [
+                'Content-Type: application/json'
+            ];
+
+            curl_setopt($ch, CURLOPT_URL, $apiUri);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $result = curl_exec($ch);
+            curl_close($ch);
+            $json_result = json_decode($result) ;
+            $id = end($json_result->result);
+            return response()->json(['status' => 'success','telegratem' => $id->message->from->id  ]);
+        }catch(Exception $ex){
+            return response()->json(['status' => 'warning', 'msg' => $ex]) ;
+        }
+    }
+
+    public function update2FA(Request $request){
+        try{
+            $data = $request->all() ;
+            $type = $data['type'];
+            if($type == 'no') $type = 'yes' ;
+            else $type = 'no' ; 
+            $record = UseSetupModel::where('email',Auth::user()->email)->first()    ;
+            $record->two_authentiacation= $type;
+            $record->save() ;
+            return response()->json(['status' =>'success' ,'msg' => '']) ;
         }catch(Exception $ex){
             return response()->json(['status' => 'warning', 'msg' => $ex]) ;
         }

@@ -9,18 +9,18 @@
     <meta name="render_prefix" content="{{ $prefix ?? '' }}" />
     <title>@yield('title')</title>
     <link href="{{ asset('css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
     <link href="{{ asset('css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/datetime_picker.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/select2.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/addon/ladda.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/main/main.css') }}" rel="stylesheet" type="text/css" />
     <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <link href="{{ asset('/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('libs/sweetalert2/sweetalert2.min.css')}}" /> 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('specail_link')
 </head>
@@ -151,57 +151,9 @@
             {{-- Do not add any code here , it will overwrite when modal is load --}}
         </div>
          {{-- Modal Delete Record in page Card --}}
-         <div class="modal fade" aria-labelledby="divDeleteRecordLabel" aria-hidden="true" id="divDeleteRecord" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header" style="background: #eef2ff;">
-                    <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <h5>Do you want to delete this record ? </h5>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="m-delete" class="btn btn-primary" data-prefix = "{{$prefix ?? ''}}" data-code = "" onclick="DeleteData(this)">Yes</button>
-                  </div>
-                </div>
-              </div>
-
-        </div>
-
-        <div class="modal fade" aria-labelledby="divUpdloadExcelLabel" aria-hidden="true" id="divUpdloadExcel" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header" style="background: #eef2ff;">
-                    <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    
-                    <div class="card">
-                        <div class="card-body">
-
-                            <h4 class="card-title">Upload {{createHeaderTitle($prefix ?? '')}} by Excel Template</h4>
-                            <p class="card-title-desc text-danger">System will overwrite your data, if record is already exist in database !</p>
-
-                            <form id="formExcel">
-                                <div class="mb-3">
-                                    <label class="form-lable">Select your excel template </label>
-                                    <input type="file" class="filestyle" data-buttonname="btn-secondary" id="uploadExcel" name="uploadExcel" tabindex="-1" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);"><div class="bootstrap-filestyle input-group"><div name="filedrag" style="position: absolute; width: 100%; height: 33.1px; z-index: -1;"></div><input type="text" class="form-control " placeholder="" disabled="" style="border-top-left-radius: 0.25rem; border-bottom-left-radius: 0.25rem;"> <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="filestyle-0" style="margin-bottom: 0;" class="btn btn-success btn-triggerExcel"><span class="buttonText">Choose file</span></label></span></div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="m-delete" class="btn btn-primary" data-prefix = "{{$prefix ?? ''}}" data-code = "" onclick="uploadExcell(this)">Upload</button>
-                  </div>
-                </div>
-              </div>
-
-        </div>
+        @include('admin.component.modal_confirm_delete')
+        @include('admin.component.modal_upload_excel')
+        @include('admin.component.modal_config_telegram')
         {{-- Print This for print table layout --}}
         <div class="print" style="display: none">
             <div class="printThis">
@@ -217,40 +169,42 @@
     <div class="rightbar-overlay"></div>
    
 
-    <script src="{{ asset('/libs/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('libs/jquery/jquery.min.js') }}"></script>
 
-    <script src="{{ asset('/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('/libs/metismenu/metisMenu.min.js') }}"></script>
-    <script src="{{ asset('/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('/libs/node-waves/waves.min.js') }}"></script>
-    <script src="{{ asset('/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ asset('libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('libs/metismenu/metisMenu.min.js') }}"></script>
+    <script src="{{ asset('libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('libs/node-waves/waves.min.js') }}"></script>
+    <script src="{{ asset('libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
     </script>
     <!--Morris Chart-->
-    <script src="{{ asset('/libs/morris.js/morris.min.js') }}"></script>
-    <script src="{{ asset('/libs/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('libs/morris.js/morris.min.js') }}"></script>
+    <script src="{{ asset('libs/raphael/raphael.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <script src="{{ asset('/js/pages/dashboard.init.js') }}"></script>
+    <script src="{{ asset('js/pages/dashboard.init.js') }}"></script>
 
-    <script src="{{ asset('/js/pages/select2.js') }}"></script>
-    <script src="{{ asset('/js/pages/datetime_picker.js') }}"></script>
+    <script src="{{ asset('js/pages/select2.js') }}"></script>
+    <script src="{{ asset('js/pages/datetime_picker.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script> --}}
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js"></script>
+    {{-- <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js"></script> --}}
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth-compat.js"></script>
 
     <script src="{{ asset('/js/addon/firebases.js') }}"></script>
-
-    <script src="{{ asset('/js/root/main.js') }}"></script>
-    <script src="{{ asset('/js/root/main_ui.js') }}"></script>
-    <script src="{{ asset('/js/addon/printThis.js') }}"></script>
-    <script src="{{ asset('/js/app.js') }}"></script>
-    <script src="{{ asset('/js/addon/ladda.js') }}"></script>
-    <script src="{{ asset('/js/addon/spin.js') }}"></script>   
-    <script src="{{ asset('/js/addon/table_fixer.js') }}"></script>    
+    {{-- https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js --}}
+    <script src="{{ asset('js/root/main.js') }}"></script>
+    <script src="{{ asset('js/root/main_ui.js') }}"></script>
+    <script src="{{ asset('js/addon/printThis.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/addon/ladda.js') }}"></script>
+    <script src="{{ asset('js/addon/spin.js') }}"></script>   
+    <script src="{{ asset('js/addon/table_fixer.js') }}"></script>    
+    <script src="{{ asset('libs/sweetalert2/sweetalert2.all.min.js')}}"></script>
+    <script src="{{ asset('libs/tinymce/tinymce.min.js')}}"></script>
     @yield('script')
 
 </body>

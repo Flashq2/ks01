@@ -14,6 +14,7 @@ use Pusher\Pusher;
 use App\MainSystem\system;
 use App\Models\UsersModels;
 use App\Models\TablesModel;
+use App\Models\UseSetupModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +44,7 @@ class UsersController extends Controller
         $this->page = "User";
         $this->prefix = "users";
         $this->page_id = '1011';
-        $this->page_card_id = '1002';
+        $this->page_card_id = '1012';
         $this->modal_path = 'App\Models\App\Models\UsersModels';
         $this->options = array('cluster' => 'ap1', 'encrypted' => true);
         $this->new_modal = new App\Models\UsersModels();
@@ -150,9 +151,9 @@ class UsersController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->all();
-            $fields = $this->system->getField($this->page_id);
+            $fields = $this->system->getField($this->page_card_id);
             if (!isset($data['is_code']))   return response()->json(['status' => 'warning', 'msg' => 'Something went wrong !']);
-            $record = App\Models\UsersModels::where($this->primary_key, $data['is_code'])->first();
+            $record = UseSetupModel::where($this->primary_key, $data['is_code'])->first();
             if (!$record) return response()->json(['status' => 'warning', 'msg' => 'Record not found in databases !']);
 
             foreach ($fields as $field) {
@@ -164,7 +165,7 @@ class UsersController extends Controller
             }
             $record->save();
             DB::commit();
-            return response()->json(['status' => 'success', 'view' => 'view']);
+            return response()->json(['status' => 'success', 'msg' => 'Record Update']);
         } catch (Exception $ex) {
             DB::rollBack();
             return response()->json(['status' => 'warning', 'msg' => $ex]);
@@ -354,7 +355,23 @@ class UsersController extends Controller
 
     public function transaction(Request $request){
         try{
-            return view('admin.users.user_card');
+            // dd((Auth::user()->user_setup))  ;
+            $page = $this->page;
+            $tabe_id = '1012';
+            $page_id =  '1012';
+            $prefix = $this->prefix;
+            $fields = $this->system->getField($page_id);
+            $param = [
+                'page' => $page,
+                'tabe_id' => $tabe_id,
+                'page_id' => $page_id,
+                'prefix' => $prefix,
+                'fields' => $fields,
+                'primary_key' => $this->primary_key,
+                'page_url' => $this->page_url ,
+                'record' => Auth::user()->user_setup,
+            ];
+            return view('admin.users.user_card', $param);
         }catch (\Exception $ex) {
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }

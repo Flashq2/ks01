@@ -7,11 +7,13 @@ var initializingTL = {
         $('#status').css({'display' : 'block'});
         $('#preloader').css({'display' : 'block'});
     },
-    TLSelect2 : function($id){
-        $(`#${$id}`).select2({
+    TLSelect2 : function(id){
+        $(`#${id}`).select2({
+            dropdownParent: $(`#${id}`).parent(),
+            width : '100%',
             theme: "bootstrap-5",
-            dropdownParent: $(`#${$id}`).parent(),  
-            width : '100%'
+            minimumInputLength: 0,
+            allowClear: true,
         })
     },
     TLSelect2LiveSearch: function(url, element) {
@@ -58,11 +60,52 @@ var initializingTL = {
     },
     TLinitSelect2: function(element){
         $(`.${element}`).select2({
-            dropdownParent: $(`.${element}`).parent(),
             width : '100%',
             theme: "bootstrap-5",
-            minimumInputLength: 0,
-            allowClear: true,
         })
     },
+    TLAlert : function(type,msg){
+        switch (type) {
+            case 'success':
+                Swal.fire({
+                    title: "Success",
+                    text: msg,
+                    icon: "success"
+                  });
+                break;
+        
+            default:
+                break;
+        }
+    },
+    TLTextEditor : function (selector){
+        tinymce.init({
+            selector: `textarea#${selector}`,
+            height: 300,
+            plugins: [
+                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                "save table contextmenu directionality emoticons template paste textcolor",
+            ],
+            toolbar:
+                "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |  forecolor backcolor emoticons",
+            style_formats: [
+                { title: "Bold text", inline: "b" },
+                {
+                    title: "Red text",
+                    inline: "span",
+                    styles: { color: "#ff0000" },
+                },
+                {
+                    title: "Red header",
+                    block: "h1",
+                    styles: { color: "#ff0000" },
+                },
+                { title: "Example 1", inline: "span", classes: "example1" },
+                { title: "Example 2", inline: "span", classes: "example2" },
+                { title: "Table styles" },
+                { title: "Table row 1", selector: "tr", classes: "tablerow1" },
+            ],
+        });
+    }
 }
