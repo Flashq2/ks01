@@ -1,7 +1,7 @@
 
 @extends('admin.layouts.app')   
 @section('title')
-    Tables ss
+  Page
 @endsection
 @section('content')
     <div class="main-content">
@@ -11,11 +11,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
-                            <option value="AL">Alabama</option>
-                              ...
-                            <option value="WY">Wyoming</option>
-                          </select>
+                        
                         <div class="row mb-2" >
                             <div class="col-lg-12" >
                                 <button class="btn btn-primary ladda-button i-add" id="create-data" data-style="expand-right" data-url = '' data-prefix = '{{$prefix}}' data-type = "create"><span class="ladda-label">Add Table</span></button> 
@@ -108,7 +104,6 @@
                 }
             });
         }
-
-        // initializingTL.TLSelect2LiveSearch('system/select2-live-search','table_names')
+   
     </script>
 @endsection

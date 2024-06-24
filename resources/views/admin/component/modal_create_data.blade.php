@@ -62,7 +62,7 @@
                         @elseif($item->field_type == 'live_search')
                         <div class="col-lg-6">
                             <div class="mb-10">
-                                <label for="{{ $item->filed_name }}" class="required form-label">{{ createHeaderTitle($item->filed_name) }} {!!$item->on_validate == 'yes' ? $validate_icon : ''!!}</label>
+                                <label for="{{ $item->filed_name }}" class="required form-label">{{ createHeaderTitle($item->filed_name) }}  {!!$item->on_validate == 'yes' ? $validate_icon : ''!!}</label>
                                 <select class="form-select select2-hidden-accessible" data-select2-id="{{ $item->filed_name }}" tabindex="-1" aria-hidden="true"
                                     data-placeholder="Select {{ createHeaderTitle($item->filed_name) }}" name="{{ $item->filed_name }}"
                                     data-table = "{{$item->table_relate}}"
@@ -72,6 +72,7 @@
                                   @if(isset($record))
                                     <option  value="{{ $record[$item->filed_name] ?? '' }}" selected>  {{ $record[$item->filed_name] ?? '' }}</option>
                                   @endif
+                                  <option  value="{{ $record[$item->filed_name] ?? '' }}" selected>  {{ $record[$item->filed_name] ?? '' }}</option>
                                 </select>
                             </div>
                         </div>

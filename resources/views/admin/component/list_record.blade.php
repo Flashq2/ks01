@@ -1,13 +1,29 @@
-<tr id="id_{{$record->$primary_key}}">
-    @if (!isset($excel))
-        <th  scope="row"><button
-                class="btn btn-danger i-delete" data-prefix = "{{$prefix}}" data-code="{{$record->$primary_key}}" onclick="prepareDelete(this)">Delete</button>
-            <button class="btn btn-success i-edit" data-id="{{ encryptHelper($record->id) }}"data-url = '{{isset($page_url) ? $page_url.'&'.encryptHelper($record->id) : ''}}' data-prefix = '{{ $prefix }}'
-                data-type = "edit" onclick="getModalEditData(this)">Edit</button>
-        </th>
-    @endif
+
+<?php 
+    $field_name = $item->filed_name; 
+    $exclude_field = ['picture_ori'] ;
+    $all_fields = $fields->pluck('filed_name')->toArray();
+?>
+
+@if(isset($excel))
     @foreach ($fields as $item)
-        <?php $page_id = $item->filed_name; ?>
-        <td>{{ $record->$page_id }}</td>
+        <?php   $field_name = $item->filed_name;  ?>
+        <td style="width: 100px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ $record->$field_name }}</td>
     @endforeach
-</tr>
+@else
+    <tr id="id_{{$record->$primary_key}}" style="white-space: nowrap;">
+        <td  scope="row"><button
+            class="btn btn-danger i-delete" data-prefix = "{{$prefix}}" data-code="{{$record->$primary_key}}" onclick="prepareDelete(this)">Delete</button>
+        <button class="btn btn-success i-edit" data-id="{{ encryptHelper($record->id) }}"data-url = '{{isset($page_url) ? $page_url.''.encryptHelper($record->id) : ''}}' data-prefix = '{{ $prefix }}'
+            data-type = "edit" onclick="getModalEditData(this)">Edit</button>
+            <img class="rounded-circle header-profile-user" src="/images/users/user-4.jpg" alt="Header Avatar">
+        @if(in_array('picture_ori',$all_fields))
+            <img class="rounded-circle header-profile-user" src="/images/users/user-4.jpg" alt="Header Avatar">
+        @endif
+        </td>
+        @foreach ($fields as $item)
+            <?php   $field_name = $item->filed_name;  ?>
+            <td style="width: 100px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{ $record->$field_name }}</td>
+        @endforeach
+    </tr>
+@endif

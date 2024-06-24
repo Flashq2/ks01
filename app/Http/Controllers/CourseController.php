@@ -12,7 +12,7 @@ use App\Imports\ImportExcell;
 use Exception;
 use Pusher\Pusher;
 use App\MainSystem\system;
-use App\Models\CourseModels;;
+use App\Models\CourseModels;
 use App\Models\TablesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +39,7 @@ class CourseController extends Controller
     {
         // Global varaible Do not make any change , 
         $this->system = new system();
-        $this->page = "Cource";
+        $this->page = "Course";
         $this->prefix = "course";
         $this->page_id = '1006';
         $this->page_card_id = '1002';

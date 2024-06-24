@@ -17,5 +17,9 @@
           return $new_string ;
 
    }
+   function CountNotifi(){
+     $count =  App\Models\NotificationModel::where('is_read','no')->count();
+     return $count ;
+   }
 
  

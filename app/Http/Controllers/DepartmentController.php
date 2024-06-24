@@ -12,7 +12,7 @@ use App\Imports\ImportExcell;
 use Exception;
 use Pusher\Pusher;
 use App\MainSystem\system;
-use App\Models\DepartmentModels;;
+use App\Models\DepartmentModels;
 use App\Models\TablesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

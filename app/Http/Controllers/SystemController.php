@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 use Exception;
 use App\MainSystem\system;
+use App\Models\CustomerModels;
+use App\Models\MenuModels;
 use App\Models\TablesModel;
 use Illuminate\Http\Request;
 use App\Models\UseSetupModel;
 use App\Models\NotificationModel;
+use App\Models\SystemModel;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -150,6 +154,79 @@ class SystemController extends Controller
         }catch(Exception $ex){
             return response()->json(['status' => 'warning', 'msg' => $ex]) ;
         }
+    }
+
+    public function preUploadImage(Request $request){
+        try{
+            $data = $request->all() ;
+            $page = $data['page'];
+            $code = $data['code'];
+            $record = $this->system->getRecordByPageNameAndPrimarykey($page,$code);
+            if(isset($record['status'])){
+                return response()->json(['status' => 'warning' ,'msg' => $record['msg']]);
+            }
+            $primary_key = $record['primary_key'];
+            $record = $record['record'] ;
+            $response =[
+                'page' =>$page,
+                'code' => $code,
+                'record' => $record,
+                'primary_key' => $primary_key
+            ];
+
+            $view = view('admin.component.modal_update_image',$response)->render();
+            return response()->json(['status' => 'success','view' => $view]) ;
+        }catch(Exception $ex){
+            return response()->json(['status' => 'warning' ,'msg' => $ex->getMessage()]);
+        }
+    }
+
+    public function UploadImage(Request $request,$page,$code){
+        try{
+           $record = $this->system->getRecordByPageNameAndPrimarykey($page,$code);
+            if(isset($record['status'])){
+                    return response()->json(['status' => 'warning' ,'msg' => $record['msg']]);
+            }
+            $primary_key = $record['primary_key'];
+            $record = $record['record'] ;
+            $upload_path = "upload/$page/".$code;
+            if (!file_exists($upload_path)) {
+                mkdir($upload_path, 0777, true);
+            }
+            $fileName = $_FILES["fileimage"]['name'];
+            $fileTmpLoc = $_FILES["fileimage"]["tmp_name"];
+            $kaboom = explode(".", $fileName);
+            $fileExt = end($kaboom);
+            $token = openssl_random_pseudo_bytes(20);
+            $token = bin2hex($token);
+            $fname = $token . '.' . $fileExt;
+            $moveResult = move_uploaded_file($fileTmpLoc, $upload_path . "/" . $fname);
+                if($moveResult){
+                    $http = $request->getSchemeAndHttpHost();
+                    $file_path = $http.'/'. $upload_path . "/" . $fname ;
+                    $record->picture_ori = $file_path;
+                    $record->save();
+                    DB::commit();
+                    return response()->json(['status' => 'success' , 'msg' => 'Your changes have been successfully saved!','path' => $file_path,'id' => $record->$code]);
+                }
+                return response()->json(['status' => 'warning' , 'msg' => 'Something went wrong !']);   
+           return dd($record) ;
+
+        }catch(Exception $ex){
+            return response()->json(['status' => 'warning' ,'msg' => $ex->getMessage()]);
+        }
+    }
+
+    public function liveSearchPage(Request $request){
+        $data = $request->all();
+        // dd($data)   ;
+        $value = trim($data['value']);
+        $record = MenuModels::where(function($query) use ($value){
+            $query->where("code", 'LIKE','%'.$value.'%')
+            ->orWhere("description", 'LIKE','%'.$value.'%');
+        })->get();
+        $view = view('admin.component.template.list_page_search',['record' => $record])->render();
+        return response()->json(['status' => 'success' , 'view' => $view]);
     }
 
 }

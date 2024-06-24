@@ -11,6 +11,32 @@ var notyf = new Notyf({
 
 $(document).ready(function () {
     var channel = pusher.subscribe("init_realtime_data");
+    initializingTL.TLSelect2LiveSearch(
+        "system/select2-live-search",
+        "table_name"
+    );
+    initializingTL.TLSelect2LiveSearch(
+        "system/select2-live-search",
+        "page_path"
+    );
+
+    initializingTL.TLSelect2LiveSearch(
+        "system/select2-live-search",
+        "modal_path"
+    );
+
+    initializingTL.TLSelect2LiveSearch(
+        "system/select2-live-search",
+        "controller_path"
+    );
+
+    initializingTL.TLSelect2LiveSearch(
+        "system/select2-live-search",
+        "routs_path"
+    );
+
+    initializingTL.TLinitSelect2("select2-custome");
+    initializingTL.TLinitSelect2("page_path");
     channel.bind("realtime", (data) => {
         notififcation(data);
     });
@@ -41,18 +67,15 @@ $(document).ready(function () {
                 url: `${prefix}/create-data`,
                 data: data,
                 beforeSend: function () {
-                    // initializingTL.TLStartloading()
                 },
                 success: function (response) {
-                    // initializingTL.TLStoptloading()
                     if (response.status == "success") {
                         $("#divDataFlow").html(response.view);
                         $("#divDataFlow").modal("show");
-                        // notyf.success(response.msg);
-                        // initializingTL.TLSelect2('table_name')
+                       
                         initializingTL.TLSelect2LiveSearch(
                             "system/select2-live-search",
-                            "table_name"
+                            "email"
                         );
                         initializingTL.TLSelect2LiveSearch(
                             "system/select2-live-search",
@@ -73,13 +96,12 @@ $(document).ready(function () {
                             "system/select2-live-search",
                             "routs_path"
                         );
-                        // $(document).find('#menu_group_code').select2()
-                        // // initializingTL.TLinitSelect2("select2-custome");
-                        // initializingTL.TLSelect2("menu_group_code");
-                        // initializingTL.TLSelect2('inactived');
+                        initializingTL.TLSelect2LiveSearch(
+                            "system/select2-live-search",
+                            "table_name"
+                        );
+                       
                         initializingTL.TLinitSelect2("select2-custome");
-
-
                     } else {
                         notyf.error(response.msg);
                     }
@@ -147,9 +169,38 @@ $(document).ready(function () {
             },
         });
     });
+    $(document).on('change','#fileimage',function(){
+       
+        let code = $(this).attr('data-code');
+        let page = $(this).attr('data-page');
+        let file = $('#file').val();
+        let data = new FormData(formimg);
+        $.ajax({
+            type: "POST",
+            url: `/system/UploadImage/${page}/${code}`,
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('.append_file').append(`
+                    <div class="col-2 row_${response.id}">
+                        <div class="drag-image ">
+                        <img src="${response.path}" alt="">
+                        <div class="btn delete_image" data-id="${response.id}">Remove</div>
+                        </div>
+                    </div>
+                
+                `)
+                notyf.success(response.msg);
+            }
+        });
+    });
 
     initializingTL.TLcreateIcon();
     initializingTL.TLTextEditor('remark')
+    $(document).on('click', '.btn-browse', function() {
+        $('.upload-item').trigger('click');
+    });
 });
 function saveData(ctrl) {
     try {
@@ -236,6 +287,7 @@ function getModalEditData(ctrl) {
                     );
 
                     initializingTL.TLinitSelect2("select2-custome");
+                    initializingTL.TLinitSelect2("page_path");
                 } else {
                     notyf.error(response.msg);
                 }
@@ -406,28 +458,28 @@ function notififcation(data) {
         console.log(error);
     }
 }
-function getCode(phone_number) {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-            size: "invisible",
-            callback: (response) => {
-                console.log("Call", response);
-            },
-        }
-    );
-    var appVerifier = window.recaptchaVerifier;
-    firebase
-        .auth()
-        .signInWithPhoneNumber(phone_number, appVerifier)
-        .then(function (confirmationResult) {
-            window.confirmationResult = confirmationResult;
-            console.log("success" + confirmationResult);
-        })
-        .catch(function (error) {
-            console.log(error.message);
-        });
-}
+// function getCode(phone_number) {
+//     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+//         "recaptcha-container",
+//         {
+//             size: "invisible",
+//             callback: (response) => {
+//                 console.log("Call", response);
+//             },
+//         }
+//     );
+//     var appVerifier = window.recaptchaVerifier;
+//     firebase
+//         .auth()
+//         .signInWithPhoneNumber(phone_number, appVerifier)
+//         .then(function (confirmationResult) {
+//             window.confirmationResult = confirmationResult;
+//             console.log("success" + confirmationResult);
+//         })
+//         .catch(function (error) {
+//             console.log(error.message);
+//         });
+// }
 function prepareCreateSchedulder(table) {
     $.ajax({
         type: "GET",
@@ -439,6 +491,7 @@ function prepareCreateSchedulder(table) {
 function configTelegramId(ctrl) {
     $("#divConfigTelegram").modal("show");
 }
+// Get Telegram ID
 function getId(ctrl) {
     $.ajax({
         type: "GET",
@@ -488,3 +541,43 @@ function update2FA(ctrl) {
         },
     });
 }
+function preUploadImage(ctrl){
+    let code = $(ctrl).attr('data-code');
+    let page = $(ctrl).attr('data-page');
+    let data ={
+        code : code,
+        page:page
+    }
+    $.ajax({
+        type: "GET",
+        url: `/system/pre-upload-image`,
+        data: data,
+        success: function(response) {
+            if(response.status == 'success'){
+                $('#divUpdloadImage').html(response.view);
+                $('#divUpdloadImage').modal('show');
+            }else{
+                notyf.error(response.msg);
+            }
+        }
+    });
+}
+function doLiveSearchPage(ctrl){
+    let value = $(ctrl).val() ;
+    let data = {
+        value : value   
+    }
+    $.ajax({
+        type: "GET",
+        url: `/system/search-page`,
+        data: data,
+        success: function(response) {
+            if(response.status == 'success'){
+                $('#resultSearchPage').html(response.view)  ;
+            }else{
+                notyf.error(response.msg);
+            }
+        }
+    });
+}
+ 

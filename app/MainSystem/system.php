@@ -1,9 +1,13 @@
 <?php
 namespace App\MainSystem;
 
+use App\Models\MenuGroupModels;
+use App\Models\MenuModels;
 use App\Models\NotificationModel;
+use App\Models\SystemModel;
 use App\Models\TableFieldModel;
 use App\Models\TablesModel;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\CssSelector\Node\FunctionNode;
@@ -123,6 +127,24 @@ class system{
             'total_record' => $total_record + 1,
         ];
         $pusher->trigger("init_realtime_data", 'realtime', $data);
+    }
+
+    public static function getRecordByPageNameAndPrimarykey($page,$code){
+        $modal_path = SystemModel::where('page_name',$page)->first() ;
+        if(!$modal_path) return ['status' => 'warning' ,'msg' => 'Modal for this page not setup yet !'];
+        $path = $modal_path->modal_path;
+        $make_modal = App::make($path);
+        $primary_key = $make_modal->getKeyName();
+        $record = $path::where($primary_key,$code)->first() ;
+        if(!$record) return ['status'=> 'warning' ,'msg' =>'no record found'];
+        return ['record'=> $record ,'primary_key' =>$primary_key];
+    }
+
+    public static function getUserMenu(){
+        $menu_group =  MenuGroupModels::where('inactived','<>','yes')->get();
+        $menus = MenuModels::where('inactived','<>','yes')->get();
+        return ['menu_group' => $menu_group ,'menus' => $menus] ;
+    
     }
 }
 ?>

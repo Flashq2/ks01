@@ -1,12 +1,11 @@
 <?php 
-
-    $menu_group =  App\Models\MenuGroupModels::where('inactived','<>','yes')->get();
-    $menus = App\Models\MenuModels::where('inactived','<>','yes')->get();
+   use App\MainSystem\system; 
+   $system = new system() ;
+   $record = $system->getUserMenu() ;
+   $menu_group = $record['menu_group'] ;
+   $menus    = $record['menus'];
 
 ?>
-
-
-
 <div class="vertical-menu">
 
     <div data-simplebar class="h-100">
@@ -26,9 +25,6 @@
                         </li>
                     @endforeach
                 @endforeach
-                
-                
-                 
             </ul>
         </div>
         <!-- Sidebar -->

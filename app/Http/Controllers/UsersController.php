@@ -12,8 +12,9 @@ use App\Imports\ImportExcell;
 use Exception;
 use Pusher\Pusher;
 use App\MainSystem\system;
-use App\Models\UsersModels;
 use App\Models\TablesModel;
+use App\Models\User;
+use App\Models\UsersModels;
 use App\Models\UseSetupModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,7 @@ class UsersController extends Controller
     protected $new_modal;
     protected $pagination;
     protected $page_url ;
+    protected $blade_card;
     function __construct()
     {
         // Global varaible Do not make any change , 
@@ -45,13 +47,14 @@ class UsersController extends Controller
         $this->prefix = "users";
         $this->page_id = '1011';
         $this->page_card_id = '1012';
-        $this->modal_path = 'App\Models\App\Models\UsersModels';
+        $this->modal_path = 'App\Models\UsersModels';
         $this->options = array('cluster' => 'ap1', 'encrypted' => true);
-        $this->new_modal = new App\Models\UsersModels();
+        $this->new_modal = new App\Models\UseSetupModel();
         $this->blade_path = 'admin.users.users';
         $this->primary_key =  $this->new_modal->getKeyName();
         $this->pagination =  env('DAFAUIL_PAGINATION');
         $this->page_url = url('users/user_card?type=up&code=');
+        $this->blade_card = 'admin.users.user_card' ;
         $this->pusher = new Pusher(
             env('PUSHER_APP_KEY'),
             env('PUSHER_APP_SECRET'),
@@ -61,13 +64,13 @@ class UsersController extends Controller
     }
     public function index()
     {
-
+        
         $page = $this->page;
         $tabe_id = $this->page_id;
         $page_id = $this->page_id;
         $prefix = $this->prefix;
         $fields = $this->system->getField($this->page_id);
-        $records = App\Models\UsersModels::paginate($this->pagination);
+        $records = UseSetupModel::paginate($this->pagination);
         $param = [
             'page' => $page,
             'tabe_id' => $tabe_id,
@@ -90,7 +93,7 @@ class UsersController extends Controller
             $input = $request->all();
            
             if (isset($input['type']) && $input['type'] == 'edit') {
-                $record = App\Models\UsersModels::where($this->primary_key, trim(decryptHelper($input['id'])))->first();
+                $record = UseSetupModel::where($this->primary_key, trim(decryptHelper($input['id'])))->first();
                 if (!$record) return response()->json(['status' => 'warning', 'msg' =>  'Record not found in dadtabases']);
                 $data = [
                     'page' => $page,
@@ -123,7 +126,7 @@ class UsersController extends Controller
             $fields = $this->system->getField($this->page_id);
             $primary_key  = $this->primary_key;
             $prefix = $this->prefix;
-            $record = new App\Models\UsersModels();
+            $record = new UseSetupModel();
             foreach ($fields as $field) {
                 $field_name = $field->filed_name;
                 if (isset($data[$field_name])) {
@@ -177,7 +180,7 @@ class UsersController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->all();
-            $record = App\Models\UsersModels::where($this->primary_key, $data['code'])->first();
+            $record = UseSetupModel::where($this->primary_key, $data['code'])->first();
             if (!$record)   return response()->json(['status' => 'warning', 'msg' => 'Record not found in databases ']);
             $record->delete();
             DB::commit();
@@ -193,7 +196,7 @@ class UsersController extends Controller
         try {
             $data = $request->all();
             $query = $this->system->extractQuery($data, $this->prefix);
-            $records = App\Models\UsersModels::whereRaw($query)->paginate($this->pagination);
+            $records = UseSetupModel::whereRaw($query)->paginate($this->pagination);
             $page = $this->page;
             $tabe_id = $this->page_id;
             $page_id = $this->page_id;
@@ -222,7 +225,7 @@ class UsersController extends Controller
         try {
             $data = $request->all();
             $query = $this->system->extractQuery($data, $this->prefix);
-            $records = App\Models\UsersModels::whereRaw($query)->paginate($this->pagination);
+            $records = UseSetupModel::whereRaw($query)->paginate($this->pagination);
             $page = $this->page;
             $tabe_id = $this->page_id;
             $page_id = $this->page_id;
@@ -251,7 +254,7 @@ class UsersController extends Controller
         try {
             $request_data = $request->all();
             $query = $this->system->extractQuery($request_data, $this->prefix);
-            $records = App\Models\UsersModels::whereRaw($query)->get();
+            $records = UseSetupModel::whereRaw($query)->get();
             $page = $this->page;
             $page_id = $this->page_id;
             $prefix = $this->prefix;
@@ -288,7 +291,7 @@ class UsersController extends Controller
         try {
             $data = $request->all();
             $query = $this->system->extractQuery($data, $this->prefix);
-            $records = App\Models\UsersModels::whereRaw($query)->get();
+            $records = UseSetupModel::whereRaw($query)->get();
             $page = $this->page;
             $page_id = $this->page_id;
             $prefix = $this->prefix;
@@ -336,7 +339,7 @@ class UsersController extends Controller
                          $insert_record[$key] = $value;
                      }
                  }
-            $record_exist = App\Models\UsersModels::where($this->primary_key,$insert_record[$this->primary_key ?? ''])->first();
+            $record_exist = UseSetupModel::where($this->primary_key,$insert_record[$this->primary_key ?? ''])->first();
             if($record_exist){
                 foreach ($insert_record->toArray() as $key=>$record) {
                     $record_exist[$key] = $record;
@@ -355,10 +358,12 @@ class UsersController extends Controller
 
     public function transaction(Request $request){
         try{
-            // dd((Auth::user()->user_setup))  ;
+            $code = $_GET['code'];
+           
+            $code = decryptHelper($code);
             $page = $this->page;
-            $tabe_id = '1012';
-            $page_id =  '1012';
+            $tabe_id =$this->page_id;
+            $page_id =  $this->page_id;
             $prefix = $this->prefix;
             $fields = $this->system->getField($page_id);
             $param = [
@@ -369,9 +374,9 @@ class UsersController extends Controller
                 'fields' => $fields,
                 'primary_key' => $this->primary_key,
                 'page_url' => $this->page_url ,
-                'record' => Auth::user()->user_setup,
+                'record' => UseSetupModel::where('id',$code)->first(),
             ];
-            return view('admin.users.user_card', $param);
+            return view($this->blade_card, $param);
         }catch (\Exception $ex) {
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }

@@ -345,4 +345,68 @@ class SlideShowController extends Controller
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }
     }
-}
+
+
+    public function UploadImage(Request $request){
+        try{
+            DB::beginTransaction();
+            try {
+                $data = $request->all();
+                $code = $data['code'];
+                $upload_path = 'upload/slide_show/'.$code;
+                $item_picture = new SlideShowModels();
+                if (!file_exists($upload_path)) {
+                    mkdir($upload_path, 0777, true);
+                }
+                $fileName = $_FILES["file"]['name'];
+                $fileTmpLoc = $_FILES["file"]["tmp_name"];
+                $kaboom = explode(".", $fileName);
+                $fileExt = end($kaboom);
+                $token = openssl_random_pseudo_bytes(20);
+                $token = bin2hex($token);
+                $fname = $token . '.' . $fileExt;
+                $moveResult = move_uploaded_file($fileTmpLoc, $upload_path . "/" . $fname);
+                 if($moveResult){
+                    $http = $request->getSchemeAndHttpHost();
+                    $file_path = $http.'/'. $upload_path . "/" . $fname ;
+                    $item_picture->picture_ori = $file_path;
+                    $item_picture->type = $code;
+                    $item_picture->save();
+                     DB::commit();
+                    return response()->json(['status' => 'success' , 'msg' => 'Your changes have been successfully saved!','path' => $file_path,'id' => $item_picture->id]);
+                 }
+                 return response()->json(['status' => 'warning' , 'msg' => 'Something went wrong !']);   
+    
+                 
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                $this->system->telegram($ex->getMessage(),$this->page,$ex->getLine());
+                return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
+            }
+        }catch(Exception $ex){
+
+        }
+    }
+
+    public function Deleteimage(Request $request){
+        DB::beginTransaction();
+        try{
+            $data = $request->all();
+            $record = SlideShowModels::where('id',$data['id'])->first();
+            $http = $request->getSchemeAndHttpHost();
+            $path_folder = str_replace($http,'',$record->picture_ori);
+            $image_to_be_delete = public_path($path_folder);
+            if (file_exists($image_to_be_delete)) {
+                unlink($image_to_be_delete); // If success return true;
+            }
+            DB::commit();
+            $record->delete();
+            return response()->json(['status' => 'success' , 'msg' => 'File has been delete']);
+        }
+        catch (\Exception $ex) {
+            DB::rollBack();
+            return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
+        } 
+    }
+    }
+

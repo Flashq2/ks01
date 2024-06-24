@@ -21,6 +21,7 @@ var initializingTL = {
         let primary_field =  $(`#${element}`).attr('data-primary_field') ;
         let description_field =  $(`#${element}`).attr('data-description_field') ;
         let value = $(`#${element}`).val() ;
+        // console.log(table)  ;
         let data = {
             table : table ,
             primary_field : primary_field ,
@@ -28,12 +29,11 @@ var initializingTL = {
             value : value
         } ;
         $(`#${element}`).select2({
-            dropdownParent: $(`#${element}`).parent(),
             width : '100%',
             theme: "bootstrap-5",
             ajax: {
                 url: url,
-                dataType: 'json',
+                // dataType: 'json',
                 delay: 300,
                 data : data,
                 processResults: function(data) {

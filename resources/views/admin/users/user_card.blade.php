@@ -1,134 +1,8 @@
 @extends('admin.layouts.app')
 @section('title')
-    systemPageTitle
+    User
 @endsection
 
-@section('style')
-    <style>
-        .left_side_img {
-            width: 100%;
-            height: 200px;
-            border: 1px solid rgba(128, 128, 128, 0.237);
-            border-style: dashed;
-            margin-bottom: 5px;
-            border-radius: 50% 50%;
-            overflow: hidden;
-        }
-
-        .left_side_img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-
-        h3 {
-            margin: 10px 0;
-        }
-
-        h6 {
-            margin: 5px 0;
-            text-transform: uppercase;
-        }
-
-        p {
-            font-size: 14px;
-            line-height: 21px;
-        }
-
-        .card-container {
-            background-color: #231E39;
-            border-radius: 5px;
-            box-shadow: 0px 10px 20px -10px rgba(0, 0, 0, 0.75);
-            color: #B3B8CD;
-            padding-top: 30px;
-            position: relative;
-            width: 350px;
-            max-width: 100%;
-            text-align: center;
-        }
-
-        .card-container .pro {
-            color: #231E39;
-            background-color: #FEBB0B;
-            border-radius: 3px;
-            font-size: 14px;
-            font-weight: bold;
-            padding: 3px 7px;
-            position: absolute;
-            top: 30px;
-            left: 30px;
-        }
-
-        .card-container .round {
-            border: 1px solid #03BFCB;
-            border-radius: 50%;
-            padding: 7px;
-        }
-
-        button.primary {
-            background-color: #03BFCB;
-            border: 1px solid #03BFCB;
-            border-radius: 3px;
-            color: #231E39;
-            font-family: Montserrat, sans-serif;
-            font-weight: 500;
-            padding: 10px 25px;
-        }
-
-        button.primary.ghost {
-            background-color: transparent;
-            color: #02899C;
-        }
-
-        .skills {
-            background-color: #1F1A36;
-            text-align: left;
-            padding: 15px;
-            margin-top: 30px;
-        }
-
-        .skills ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .skills ul li {
-            border: 1px solid #2D2747;
-            border-radius: 2px;
-            display: inline-block;
-            font-size: 12px;
-            margin: 0 7px 7px 0;
-            padding: 7px;
-        }
-
-        footer {
-            background-color: #222;
-            color: #fff;
-            font-size: 14px;
-            bottom: 0;
-            position: fixed;
-            left: 0;
-            right: 0;
-            text-align: center;
-            z-index: 999;
-        }
-
-        footer p {
-            margin: 10px 0;
-        }
-
-        footer i {
-            color: red;
-        }
-
-        footer a {
-            color: #3c97bf;
-            text-decoration: none;
-        }
-    </style>
-@endsection
 @section('content')
     <div class="main-content">
 
@@ -138,13 +12,12 @@
                     <div class="col-12">
                         <button class="btn btn-success ladda-button" data-prefix = "/{{$prefix}}" onclick="updateData(this)"><span class="ladda-label">Updates</span></button>
                         <button class="btn btn-info ladda-button " onclick="configTelegramId(this)"><span class="ladda-label"><i class="fab fa-telegram-plane"></i> Telegram Bot</span></button>
-                        <button class="btn btn-{{$record['two_authentiacation'] == 'no' ? 'warning' : 'danger'}} ladda-button " id="update-2fa" data-type = '{{$record['two_authentiacation']}}' onclick="update2FA(this)"><span class="ladda-label">
+                        {{-- <button class="btn btn-{{$record['two_authentiacation'] == 'no' ? 'warning' : 'danger'}} ladda-button " id="update-2fa" data-type = '{{$record['two_authentiacation']}}' onclick="update2FA(this)"><span class="ladda-label">
                             <i class="fas fa-user-lock"></i> </span> 
                             <span class="lable-text">
                                 {{$record['two_authentiacation'] == 'no' ? 'Enable 2 Factor Authentication' : ' Disabled 2 Factor Authentication'}}
-                               
                             </span> 
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
                 <br>
@@ -156,18 +29,10 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="card-container">
-                                            <img class="round" src="{{asset('images/users/user-3.jpg')}}" alt="user" />
+                                            <img class="round" src="{{$record['picture_ori'] ?? ''}}" alt="user" />
                                             <h3>{{$record['name']}}</h3>
                                             <h6>{{$record['address']}}</h6>
-                                            {{-- <p>User interface designer and <br/> front-end developer</p> --}}
-                                            {{-- <div class="buttons">
-                                                <button class="primary">
-                                                    Upload Image
-                                                </button>
-                                                <button class="primary ghost">
-                                                    Password
-                                                </button>
-                                            </div> --}}
+                                            
                                             <div class="skills">
                                                 <h6>Role</h6>
                                                 <ul>
@@ -177,6 +42,7 @@
                                                 </ul>
                                             </div>
                                         </div>
+                                        @include('admin.component.action.button_upload_image',['page' => 'User' ,'primary_key' => $record['id']])
                                     </div>
 
                                 </div>

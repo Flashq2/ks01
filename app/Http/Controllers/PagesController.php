@@ -98,11 +98,12 @@ class PagesController extends Controller
     public function crateNewPage(Request $request){
         try{
             $data = $request->all() ;
+            
             $table = TablesModel::where('table_id',$data['table_id'])->first() ;
             if(!$table) return response()->json(['status' => 'warning' ,'msg' => 'Table not setup !']) ;
-            $this->createViewComponet($data['page_path'],$table->table_name);
-            $this->newRoute($data['routs_path'],$table->table_name,$table->table_name);
-            $this->createControllerComponent($data['controller_path'],$table->table_name,$data);
+            $this->createViewComponet($data['page_path'],$table->table_name,$data['type']);
+            $this->newRoute($data['routs_path'],$table->table_name,$table->table_name,$data['type']);
+            $this->createControllerComponent($data['controller_path'],$table->table_name,$data,$data['type']);
             $this->createModelsComponet($table->table_name);
             $this->generatePageId($data);
             return response()->json(['status' => 'success' ,'msg' => 'Table Create sucessfully ']) ;
@@ -112,7 +113,7 @@ class PagesController extends Controller
         }
     }
 
-    public function initRoute($prefix,$table){
+    public function initRoute($prefix,$table,$type = 'list'){
         $routes_name = $this->createFileName($table,'controller') ;
         $controller_path = trim("App\Http\Controllers\ ");
         $data = "\nRoute::group(['prefix' => '$prefix'],function(){  
@@ -130,10 +131,42 @@ class PagesController extends Controller
                 Route::post('/upload-excel','ImportExcel');
             });
         });" ;
+        if($type == 'Page Card'){
+            $card_route = $table.'_card';
+            $data = "\nRoute::group(['prefix' => '$prefix'],function(){  
+                Route::controller($controller_path$routes_name::class)->group(function(){
+                    Route::get('','index');
+                    Route::post('/create-data','createData');
+                    Route::post('/delete-table','build');
+                    Route::post('/edit-data','editData');
+                    Route::post('/submit-data','submitData');
+                    Route::post('/delete-data','deleteData');
+                    Route::get('/ajax-paginate','ajaxPagination');
+                    Route::get('/search','search');
+                    Route::get('/export-excel/{table}','downLoadExcel');
+                    Route::get('/print-pdf/{table}','printPDF');
+                    Route::post('/upload-excel','ImportExcel');
 
-
-
-
+                    Route::get('/$card_route', 'transaction');
+                });
+            });" ;
+        }else{
+            $data = "\nRoute::group(['prefix' => '$prefix'],function(){  
+                Route::controller($controller_path$routes_name::class)->group(function(){
+                    Route::get('','index');
+                    Route::post('/create-data','createData');
+                    Route::post('/delete-table','build');
+                    Route::post('/edit-data','editData');
+                    Route::post('/submit-data','submitData');
+                    Route::post('/delete-data','deleteData');
+                    Route::get('/ajax-paginate','ajaxPagination');
+                    Route::get('/search','search');
+                    Route::get('/export-excel/{table}','downLoadExcel');
+                    Route::get('/print-pdf/{table}','printPDF');
+                    Route::post('/upload-excel','ImportExcel');
+                });
+            });" ;
+        }
         return $data ;
     }
     public function createFileName($string,$type){
@@ -164,15 +197,16 @@ class PagesController extends Controller
         return $new_name ;
     }
 
-    protected function newRoute($route_path,$prefix,$table) {
+    protected function newRoute($route_path,$prefix,$table,$type) {
 
         $fp = fopen($route_path,'a'); 
-        fwrite($fp,$this->initRoute($prefix,$table));   
+        fwrite($fp,$this->initRoute($prefix,$table,$type));   
         fclose($fp);
         return true;
     }
 
-    protected function createViewComponet($path,$table_name){
+    protected function createViewComponet($path,$table_name,$type= 'list'){
+
         $view_template = base_path('stubs/view_list_template.stub') ;
         $current_template = file_get_contents($view_template);
         $blade_need_to = $path.'/'.$table_name.'/'.$table_name.'.blade.php';
@@ -182,43 +216,99 @@ class PagesController extends Controller
         fwrite($fp, $current_template);
         fclose($fp);
         chmod($blade_need_to, 0777);
+        if($type == 'Page Card'){
+            $view_template = base_path('stubs/view_card_template.stub') ;
+            $current_template = file_get_contents($view_template);
+            $blade_need_to = $path.'/'.$table_name.'/'.$table_name.'_card.blade.php';
+            if(!is_dir($path.'/'.$table_name)) mkdir($path.'/'.$table_name, 0775, true); // Create Dir
+            if(!file_exists($blade_need_to))  $createfile = fopen($blade_need_to, 'x'); // Create blade template 
+            $fp = fopen($blade_need_to, 'w');
+            fwrite($fp, $current_template);
+            fclose($fp);
+            chmod($blade_need_to, 0777);
+        }
         return true;
     }
 
-    protected function createControllerComponent($path,$table_name,$data){
-        $controller_tamplate = base_path('stubs/controller_custome.stub') ;
-        $current_template = file_get_contents($controller_tamplate);
-        $controller_name = $this->createFileName($table_name,'controller');
-        $blade_path =    'admin.'.$table_name.'.'.$table_name;
-        $model_name = $this->createFileName($table_name,'models');
-        $array_key_need_to_replace = [
-            'systemUserCreate' ,
-            'systemModels',
-            'systemClass',
-            'systemPageName',
-            'systemPrefix',
-            'systemTable',
-            'systemgetModel',
-            'systemBladePath'
-        ];
-        $key = [
-            'Pok puthea',
-            trim('App\Models\ ').$model_name,
-            $controller_name,
-            $data['title'],
-            $table_name,
-            $data['table_id'],
-            $model_name,
-            $blade_path
-            
-        ];
-        $sart_toreplace = str_replace($array_key_need_to_replace,$key,$current_template);
-        $controller_path = app_path('Http/Controllers').'/'.$controller_name.'.php';
-        fopen($controller_path, 'x');
-        $fp = fopen($controller_path, 'w');
-        fwrite($fp, $sart_toreplace);
-        fclose($fp);
-        chmod($controller_path, 0777);
+    protected function createControllerComponent($path,$table_name,$data,$type = 'list'){
+
+
+        if($type == 'Page Card'){
+            $blade_card = $table_name.'_card';
+            $url_card = $table_name.'/'.$blade_card.'?type=up&code=';
+            $controller_tamplate = base_path('stubs/controller_custome_card.stub') ;
+            $current_template = file_get_contents($controller_tamplate);
+            $controller_name = $this->createFileName($table_name,'controller');
+            $blade_path =    'admin.'.$table_name.'.'.$table_name;
+            $model_name = $this->createFileName($table_name,'models');
+            $array_key_need_to_replace = [
+                'systemUserCreate' ,
+                'systemModels',
+                'systemClass',
+                'systemPageName',
+                'systemPrefix',
+                'systemTable',
+                'systemgetModel',
+                'systemBladePath',
+                'SystemUrlCard',
+                'SystemUrl'
+            ];
+            $key = [
+                'Pok puthea',
+                trim('App\Models\ ').$model_name,
+                $controller_name,
+                $data['title'],
+                $table_name,
+                $data['table_id'],
+                $model_name,
+                $blade_path,
+                "admin.$table_name".'.'.$blade_card,
+                $url_card,
+                
+            ];
+            $sart_toreplace = str_replace($array_key_need_to_replace,$key,$current_template);
+            $controller_path = app_path('Http/Controllers').'/'.$controller_name.'.php';
+            fopen($controller_path, 'x');
+            $fp = fopen($controller_path, 'w');
+            fwrite($fp, $sart_toreplace);
+            fclose($fp);
+            chmod($controller_path, 0777);
+        }else{
+            $controller_tamplate = base_path('stubs/controller_custome.stub') ;
+            $current_template = file_get_contents($controller_tamplate);
+            $controller_name = $this->createFileName($table_name,'controller');
+            $blade_path =    'admin.'.$table_name.'.'.$table_name;
+            $model_name = $this->createFileName($table_name,'models');
+            $array_key_need_to_replace = [
+                'systemUserCreate' ,
+                'systemModels',
+                'systemClass',
+                'systemPageName',
+                'systemPrefix',
+                'systemTable',
+                'systemgetModel',
+                'systemBladePath'
+            ];
+            $key = [
+                'Pok puthea',
+                trim('App\Models\ ').$model_name,
+                $controller_name,
+                $data['title'],
+                $table_name,
+                $data['table_id'],
+                $model_name,
+                $blade_path
+                
+            ];
+            $sart_toreplace = str_replace($array_key_need_to_replace,$key,$current_template);
+            $controller_path = app_path('Http/Controllers').'/'.$controller_name.'.php';
+            fopen($controller_path, 'x');
+            $fp = fopen($controller_path, 'w');
+            fwrite($fp, $sart_toreplace);
+            fclose($fp);
+            chmod($controller_path, 0777);
+        }
+    
         return true;
     }
 
@@ -259,8 +349,18 @@ class PagesController extends Controller
         $record->save() ;
 
     }
+    public function storePathFromSelect($request){
+        try{
+            $data = $request->all() ;
+            $modal_path = trim($data['modal_path']);
+            $controller_path = trim($data['controller_path']);
+            $blade_path = trim($data['blade_path']);
+            if(!$modal_path) return response()->json(['status' => 'Please select path for store models (Develper only)']);
+            if(!$controller_path) return response()->json(['status' => 'Please select path for store controller']);
+            if(!$blade_path) return ; 
+        }catch(Exception $ex){
 
-    protected function create_blade_path($data){
-        
+            return response()->json(['status' => 'Something when wrong !']) ;
+        }
     }
 }

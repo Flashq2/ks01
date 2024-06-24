@@ -9,6 +9,6 @@ class UseSetupModel extends Model
 {
     protected $table = 'user_setup';
     public $incrementing = false;
-    protected $primaryKey = 'email';
+    protected $primaryKey = 'id';
     use HasFactory;
 }

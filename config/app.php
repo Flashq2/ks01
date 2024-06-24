@@ -196,6 +196,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
     ],
 

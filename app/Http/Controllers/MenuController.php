@@ -59,7 +59,6 @@ class MenuController extends Controller
     }
     public function index()
     {
-
         $page = $this->page;
         $tabe_id = $this->page_id;
         $page_id = $this->page_id;
