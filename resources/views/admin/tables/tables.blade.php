@@ -79,8 +79,6 @@
         const prefix = "{{$prefix}}";
         $(document).on('click','.m-confirm-submit',function(e){
             let code = $(this).data('code');
-            
-           
         })
 
         function buildTable(ctrl){
@@ -101,7 +99,5 @@
                 }
             });
         }
-
-        // initializingTL.TLSelect2LiveSearch('system/select2-live-search','table_names')
     </script>
 @endsection

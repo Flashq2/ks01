@@ -448,8 +448,6 @@
 
 
     </div>
-
-
     <!-- /Right-bar -->
     @include('admin.layouts.right_sidebar')
     <!-- Right bar overlay-->

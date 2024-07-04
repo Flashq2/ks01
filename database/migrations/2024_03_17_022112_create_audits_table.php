@@ -13,28 +13,31 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
-        $connection = config('audit.drivers.database.connection', config('database.default'));
-        $table = config('audit.drivers.database.table', 'audits');
+        if (!Schema::hasTable('audits')) {
 
-        Schema::connection($connection)->create($table, function (Blueprint $table) {
+            $connection = config('audit.drivers.database.connection', config('database.default'));
+            $table = config('audit.drivers.database.table', 'audits');
 
-            $morphPrefix = config('audit.user.morph_prefix', 'user');
+            Schema::connection($connection)->create($table, function (Blueprint $table) {
 
-            $table->bigIncrements('id');
-            $table->string($morphPrefix . '_type')->nullable();
-            $table->unsignedBigInteger($morphPrefix . '_id')->nullable();
-            $table->string('event');
-            $table->morphs('auditable');
-            $table->text('old_values')->nullable();
-            $table->text('new_values')->nullable();
-            $table->text('url')->nullable();
-            $table->ipAddress('ip_address')->nullable();
-            $table->string('user_agent', 1023)->nullable();
-            $table->string('tags')->nullable();
-            $table->timestamps();
+                $morphPrefix = config('audit.user.morph_prefix', 'user');
 
-            $table->index([$morphPrefix . '_id', $morphPrefix . '_type']);
-        });
+                $table->bigIncrements('id');
+                $table->string($morphPrefix . '_type')->nullable();
+                $table->unsignedBigInteger($morphPrefix . '_id')->nullable();
+                $table->string('event');
+                $table->morphs('auditable');
+                $table->text('old_values')->nullable();
+                $table->text('new_values')->nullable();
+                $table->text('url')->nullable();
+                $table->ipAddress('ip_address')->nullable();
+                $table->string('user_agent', 1023)->nullable();
+                $table->string('tags')->nullable();
+                $table->timestamps();
+
+                $table->index([$morphPrefix . '_id', $morphPrefix . '_type']);
+            });
+        }
     }
 
     /**

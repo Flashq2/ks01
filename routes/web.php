@@ -12,7 +12,7 @@
     // Authentication For system
     Route::get('/login', [LoginController::class, 'index']);
     Route::post('/doLogin', [LoginController::class, 'doLogin'])->name('doLogin');
-    
+
     // End Authentication 
 
 
@@ -24,9 +24,9 @@
             Route::get('read-notification', 'showNotification');
             Route::get('get-telegram-id', 'getTelegramID');
             Route::post('up-2fa-status', 'update2FA');
-            Route::get('pre-upload-image','preUploadImage');
-            Route::post('UploadImage/{page}/{primary}','UploadImage');
-            Route::get('/search-page','liveSearchPage');
+            Route::get('pre-upload-image', 'preUploadImage');
+            Route::post('UploadImage/{page}/{primary}', 'UploadImage');
+            Route::get('/search-page', 'liveSearchPage');
         });
     });
 
@@ -36,7 +36,7 @@
         });
     });
 
-    Route::group(['prefix' => 'tables'], function () { // tables
+    Route::group(['prefix' => 'tables','middleware' => 'setec'], function () { // tables
         Route::controller(TablesController::class)->group(function () {
             Route::get('', 'index');
             Route::post('/create-data', 'createData');
@@ -186,8 +186,8 @@
     });
 
 
-   
-    Route::group(['prefix' => 'customer' , 'middleware' => 'setec'], function () {
+
+    Route::group(['prefix' => 'customer', 'middleware' => 'setec'], function () {
         Route::controller(App\Http\Controllers\CustomerController::class)->group(function () {
             Route::get('', 'index');
             Route::post('/create-data', 'createData');
@@ -204,7 +204,7 @@
             Route::get('/customer_card', 'transaction');
         });
     });
-    Route::group(['prefix' => 'vendor' , 'middleware' => 'setec'], function () {
+    Route::group(['prefix' => 'vendor', 'middleware' => 'setec'], function () {
         Route::controller(App\Http\Controllers\VendorController::class)->group(function () {
             Route::get('', 'index');
             Route::post('/create-data', 'createData');
@@ -249,5 +249,41 @@
             Route::get('/export-excel/{table}', 'downLoadExcel');
             Route::get('/print-pdf/{table}', 'printPDF');
             Route::post('/upload-excel', 'ImportExcel');
+        });
+    });
+
+    Route::group(['prefix' => 'checkount', 'middleware' => 'setec'], function () {
+        Route::controller(App\Http\Controllers\CheckoutController::class)->group(function () {
+            Route::get('', 'index');
+            // Route::post('/create-data', 'createData');
+            // Route::post('/delete-table', 'build');
+            // Route::post('/edit-data', 'editData');
+            // Route::post('/submit-data', 'submitData');
+            // Route::post('/delete-data', 'deleteData');
+            // Route::get('/ajax-paginate', 'ajaxPagination');
+            // Route::get('/search', 'search');
+            // Route::get('/export-excel/{table}', 'downLoadExcel');
+            // Route::get('/print-pdf/{table}', 'printPDF');
+            // Route::post('/upload-excel', 'ImportExcel');
+        });
+    });
+
+    Route::group(['prefix' => 'items'], function () {
+        Route::controller(App\Http\Controllers\ItemsController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
+            Route::get('/items_card', 'transaction'); 
+
+            // Ad-on custome
+            Route::get('/pre-publish-item','prePublishItem');
         });
     });

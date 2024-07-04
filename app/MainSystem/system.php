@@ -146,5 +146,10 @@ class system{
         return ['menu_group' => $menu_group ,'menus' => $menus] ;
     
     }
+
+    public static function randomOTPCode($digit){
+        $myRandom = str_pad(rand(1,999999), $digit, '0', STR_PAD_LEFT);
+        return $myRandom ;
+    }
 }
 ?>

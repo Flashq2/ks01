@@ -580,4 +580,25 @@ function doLiveSearchPage(ctrl){
         }
     });
 }
+
+function preChangeImage(ctrl){
+    let page = $(ctrl).attr('data-page');
+    let code = $(ctrl).attr('data-code');
+    let data ={
+        page : page,
+        code : code,
+    };
+    $.ajax({
+        type: "GET",
+        url: `/system/pre-upload-image`,
+        data: data,
+        success: function(response) {
+            if(response.status == 'success'){
+              
+            }else{
+                notyf.error(response.msg);
+            }
+        }
+    });
+}
  

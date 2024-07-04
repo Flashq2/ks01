@@ -22,7 +22,8 @@
                             <div class="mb-10">
                                 <label for="{{ $item->filed_name }}" class="form-label">{{ createHeaderTitle($item->filed_name) }} {!!$item->on_validate == 'yes' ? $validate_icon : ''!!}</label>
                                 <input type="text" class="form-control padding_form" id="{{ $item->filed_name }}"
-                                    placeholder="{{ $item->filed_name }}" maxlength="{{ $item->max_lenght }}"
+                                    placeholder="{{ $item->filed_name }}" 
+                                    maxlength="{{ $item->max_lenght }}"
                                     name="{{ $item->filed_name }}"
                                     {{$item->readonly == 'yes' ? 'readonly' : ''}}
                                     value="{{ $record[$item->filed_name] ?? '' }}" />
@@ -103,11 +104,11 @@
        
     </div>
     <br>
-    @if(App\MainSystem\system::HasColumn('user_setup','remark'))
+    {{-- @if(App\MainSystem\system::HasColumn($prefix,'remark'))
         <div class="row">
             <div class="col-lg-12">
                 <textarea name="remark" id="remark" value = "{!! $record['remark'] !!}">{!! $record['remark'] !!}</textarea>
             </div>
         </div>
-    @endif
+    @endif --}}
 </form>

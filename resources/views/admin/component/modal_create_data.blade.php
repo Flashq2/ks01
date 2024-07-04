@@ -1,4 +1,12 @@
 
+<style>
+    .custome-bg-info{
+        background: rgb(172 225 240) !important;
+        padding: 10px;
+        border-left-color: #eef2ff ;
+        border-left: 5px solid #125deb ;
+    }
+</style>
 <div class="modal-dialog {{$modal_size}}" role="dialog">
     <div class="modal-content ">
         <div class="modal-header" style="background: #eef2ff;">
@@ -11,6 +19,16 @@
             </button>
         </div>
         <div class="modal-body">
+            @if(isset($has_info))
+                <div class="row">
+                    <div class="col-12">
+                        <div class="custome-bg-info">
+                            {{$has_info['data']}}
+                        </div>
+                    </div>
+                </div> 
+                <br>
+            @endif
             <form class="form" id="formData">
                 <input type="hidden" name="is_code" id="is_code" value="{{ isset($record) ? $record[$primary_key] : ''}}">
                 <div class="row">

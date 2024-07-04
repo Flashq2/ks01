@@ -67,14 +67,19 @@ class TablesController extends Controller
             $modal_size = 'modal-lg' ;
             $page = $this->page ;
             $fields = $this->system->getField($this->page_id) ;
+            $last_index = TablesModel::max('table_id') +1;
+            $has_info['data'] = "Here is last index id $last_index" ;
             $data = [
                 'page' => $page,
                 'modal_size' => $modal_size,
                 'fields' => $fields ,
-                'prefix' => $this->prefix 
+                'prefix' => $this->prefix ,
+                'last_index' => $last_index,
+                'has_info' => $has_info
             ];
+            
             $view = view('admin.component.modal_create_data', $data)->render();
-            return response()->json(['status' => 'success' ,'view' => $view]);
+            return response()->json(['status' => 'success' ,'view' => $view ,'last_index' => $last_index]);
         }catch(Exception $ex){
           
         }
@@ -87,53 +92,99 @@ class TablesController extends Controller
             $decode = $this->system->Decr_string($data['code'],null,null) ;
             $record = TablesModel::where('id',$decode)->first();
             $exist = TableFieldModel::where('table_name',$record->table_name)->first();
-            $column = DB::getSchemaBuilder()->getColumnListing($record->table_name);
+            $column = DB::select("
+                    SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA , COLUMN_COMMENT
+                    FROM INFORMATION_SCHEMA.COLUMNS 
+                    WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+                ", ['ks_01', $record->table_name]);
+        
             $i = 1;
             if($exist){
                 TableFieldModel::where('table_name',$record->table_name)->delete();
                 foreach($column as $col){
                     $new = new TableFieldModel();
+                    $specail_type = explode('|',$col->COLUMN_COMMENT);
+                    
                     $new->table_id = $record->table_id;
                     $new->table_name = $record->table_name;
-                    
-                    $new->filed_name = $col;
+                    $new->filed_name = $col->COLUMN_NAME;
                     $new->field_id = $record->table_id + $i;
                     $new->on_validate = 'no';
                     $new->max_lenght = 255;
                     $new->hide = 'no';
-                    if($col == 'code')   $new->on_validate  = 'yes';
-                    if(in_array($col,['created_at','updated_at','deleted_at','id'])) $new->hide = 'yes';
-                    $new->email = '';
+                    if($col->COLUMN_NAME == 'code') $new->on_validate  = 'yes';
+                    if(in_array($col->COLUMN_NAME,['created_at','updated_at','deleted_at','id'])) $new->hide = 'yes';
+                    $new->email = Auth::user()->email;
+                    
+                    if(in_array($col->COLUMN_TYPE,['int','decimal(10,2)']))
+                    {
+                        $new->field_type = 'decimal';
+                    }else{
+                        if(count($specail_type) > 0 ){
+                            if($specail_type[0] == 'option'){
+                                $new->field_type = 'option';
+                                $new->option_value  = $specail_type[1] ;
+                            }elseif($specail_type[0] == 'select2'){
+                                $new->field_type = 'select2';
+                                $new->table_relate = $specail_type[1];
+                                $new->table_code_relate = $specail_type[2];
+                                $new->table_description_relate = $specail_type[3];
+                            }
+                        }else{
+                            $new->field_type = 'text'; 
+                        }
+                        
+                    }
                     $new->list_order = $i;
                     $i +=1;
-                    $new->field_type = 'text';
                     $new->save();
                 }
 
             }else{
                 foreach($column as $col){
                     $new = new TableFieldModel();
+                    $specail_type = explode('|',$col->COLUMN_COMMENT);
+                    
                     $new->table_id = $record->table_id;
                     $new->table_name = $record->table_name;
-                    $new->filed_name = $col;
+                    $new->filed_name = $col->COLUMN_NAME;
                     $new->field_id = $record->table_id + $i;
                     $new->on_validate = 'no';
                     $new->max_lenght = 255;
                     $new->hide = 'no';
-                    if($col == 'code')   $new->on_validate  = 'yes';
-                    if(in_array($col,['created_at','updated_at','deleted_at','id'])) $new->hide = 'yes';
-                    $new->email = '';
+                    if($col->COLUMN_NAME == 'code') $new->on_validate  = 'yes';
+                    if(in_array($col->COLUMN_NAME,['created_at','updated_at','deleted_at','id'])) $new->hide = 'yes';
+                    $new->email = Auth::user()->email;
+                    
+                    if(in_array($col->COLUMN_TYPE,['int','decimal(10,2)']))
+                    {
+                        $new->field_type = 'decimal';
+                    }else{
+                        if(count($specail_type) > 0 ){
+                            if($specail_type[0] == 'option'){
+                                $new->field_type = 'option';
+                                $new->option_value  = $specail_type[1] ;
+                            }elseif($specail_type[0] == 'select2'){
+                                $new->field_type = 'select2';
+                                $new->table_relate = $specail_type[1];
+                                $new->table_code_relate = $specail_type[2];
+                                $new->table_description_relate = $specail_type[3];
+                            }
+                        }else{
+                            $new->field_type = 'text'; 
+                        }
+                        
+                    }
                     $new->list_order = $i;
-                    $new->field_type = 'text';
                     $i +=1;
                     $new->save();
-                   
                 }
             }
             DB::commit();
             $view = '';
             return response()->json(['status'=>'success','msg' =>'Table Build Successfuly','view'=>$view]);
         }catch(Exception $ex){
+            dd($ex) ;
             DB::rollBack();
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }

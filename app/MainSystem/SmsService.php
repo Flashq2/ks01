@@ -20,14 +20,16 @@ namespace App\MainSystem;
             @param $params Array 
 
         */
-        public function PostSMS($user,$data){
+        public function PostSMS($content,$user){
+            // Json file create in app Path . Do not make any change .
             $sms_account_service = app_path('SMS/sms_service.json');
             $sms_service_content = file_get_contents($sms_account_service);
             $json_data = json_decode($sms_service_content) ;
+            $phone_no = str_replace('+','',$user->phone_no) ;
             $params = array(
                 'sender' => 'SMS Info',
-                'to' => "85592390212",
-                'content' => 'Pherk Ot',
+                'to' => '85592390212',
+                'content' => $content['content'],
                 'username' => $json_data->account_email,
                 'password' => $json_data->account_password,
             );

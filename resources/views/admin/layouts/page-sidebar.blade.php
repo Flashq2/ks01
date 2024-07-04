@@ -15,10 +15,10 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 @foreach ($menu_group as $groups)
-                <li class="menu-title">{{$groups->description}}</li>
+                <li class="menu-title" style="font-size: 12px;">{{$groups->description}}</li>
                     @foreach ($menus->where('menu_group_code',$groups->code) as $item)
                         <li>
-                            <a href="{{url("/$item->url")}}" class=" waves-effect"style="font-size: 13px;">    
+                            <a href="{{url("/$item->url")}}" class=" waves-effect"style="font-size: 13px;margin-left: 20px">    
                                 {!! $item->icon !!}
                                 <span>{{$item->description}}</span>
                             </a>

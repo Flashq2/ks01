@@ -21,6 +21,7 @@ class SetecMiddleWare
         if(Auth::check()){
             $user_setup = UseSetupModel::where('email',Auth::user()->email)->first() ;
             Auth::user()->user_setup = $user_setup ;
+            
             return $next($request);
         }else {
             return redirect('/login');
