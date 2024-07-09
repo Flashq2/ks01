@@ -3,7 +3,7 @@
 
         <div class="rightbar-title d-flex align-items-center px-3 py-4">
     
-            <h5 class="m-0 me-2">Settings</h5>
+            <h5 class="m-0 me-2">More Detail</h5>
 
             <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
                 <i class="mdi mdi-close noti-icon"></i>
@@ -12,9 +12,7 @@
 
         <!-- Settings -->
         <hr class="mt-0" />
-   
-
-           <div class="px-4 py-2">
+           {{-- <div class="px-4 py-2">
             <h6 class="mb-3">Select Custome Colors</h6>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input theme-color" type="radio" name="theme-mode"
@@ -33,12 +31,12 @@
                         id="theme-teal" value="teal" onchange="document.documentElement.setAttribute('data-theme-mode', 'teal')">
                     <label class="form-check-label" for="theme-teal">Teal</label>
                 </div>
-           </div>
+           </div> --}}
    
 
-        <h6 class="text-center mb-0 mt-3">Choose Layouts</h6>
+        {{-- <h6 class="text-center mb-0 mt-3">Choose Layouts</h6> --}}
 
-        <div class="p-4">
+        {{-- <div class="p-4">
             <div class="mb-2">
             </div>
             <div class="form-check form-switch mb-3">
@@ -61,6 +59,10 @@
             </div>
 
     
+        </div> --}}
+
+        <div class="row" id="tab_sidebar_content">
+            @include('admin.layouts.slide_bar_tab')
         </div>
 
     </div> <!-- end slimscroll-menu-->

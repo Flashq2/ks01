@@ -26,7 +26,7 @@
                                     maxlength="{{ $item->max_lenght }}"
                                     name="{{ $item->filed_name }}"
                                     {{$item->readonly == 'yes' ? 'readonly' : ''}}
-                                    value="{{ $record[$item->filed_name] ?? '' }}" />
+                                    value="{{ isset($record[$item->filed_name]) ? format_number($record[$item->filed_name],$item->format) : '' }}" />
                             </div>
                         </div>
                     @endif
@@ -93,7 +93,7 @@
                                 name="{{ $item->filed_name }}"
                                 {{$item->readonly == 'yes' ? 'readonly' : ''}}
                                 data-date-format="dd M, yyyy" data-provide="datepicker" data-date-container='#{{ $item->filed_name }}'
-                                value="{{ $record[$item->filed_name] ?? '' }}" />
+                                value="{{ format_number($record[$item->filed_name],$item->format)?? '' }}" />
                         </div>
                     </div>
                 @endif

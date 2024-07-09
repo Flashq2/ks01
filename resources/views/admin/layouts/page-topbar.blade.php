@@ -17,9 +17,8 @@
             @include('admin.component.element.expend')
             @include('admin.component.action.message');
             @include('admin.component.template.user_path')
-
             <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
+                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect" onclick="showRightbar(this)">
                     <i class="mdi mdi-spin mdi-cog"></i>
                 </button>
             </div>

@@ -21,7 +21,6 @@ var initializingTL = {
         let primary_field =  $(`#${element}`).attr('data-primary_field') ;
         let description_field =  $(`#${element}`).attr('data-description_field') ;
         let value = $(`#${element}`).val() ;
-        // console.log(table)  ;
         let data = {
             table : table ,
             primary_field : primary_field ,
@@ -33,7 +32,6 @@ var initializingTL = {
             theme: "bootstrap-5",
             ajax: {
                 url: url,
-                // dataType: 'json',
                 delay: 300,
                 data : data,
                 processResults: function(data) {
@@ -106,6 +104,30 @@ var initializingTL = {
                 { title: "Table styles" },
                 { title: "Table row 1", selector: "tr", classes: "tablerow1" },
             ],
+        });
+    },
+    TLCallNavBar : function(render_prefix,tab_id = ''){
+        let page = render_prefix ;
+        let tab_ids = tab_id;
+        let data = {
+            page : page,
+            tab_ids : tab_ids
+        } ;
+        $.ajax({
+            type: "GET",
+            data:data,
+            url: `/system/call-navbar`,
+            success: function (response) {
+                if(response.status == 'success'){
+                    $('#tab-content').html(response.view);
+                    $("#TableOfTable").tableFixer({ head: false, left: 2 });
+                        $('.select2-custome').select2({
+                        width : '100%',
+                        theme: "bootstrap-5",
+                        dropdownParent: $("#tab_sidebar_content")   
+                    }) ;
+                }
+            }
         });
     }
 }

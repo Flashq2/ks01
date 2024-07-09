@@ -27,6 +27,8 @@
             Route::get('pre-upload-image', 'preUploadImage');
             Route::post('UploadImage/{page}/{primary}', 'UploadImage');
             Route::get('/search-page', 'liveSearchPage');
+            Route::get('call-navbar','callNavBar');
+            Route::post('update-table-list','changeTableField');
         });
     });
 

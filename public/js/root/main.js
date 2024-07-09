@@ -201,6 +201,8 @@ $(document).ready(function () {
     $(document).on('click', '.btn-browse', function() {
         $('.upload-item').trigger('click');
     });
+
+    // Call Nave bar
 });
 function saveData(ctrl) {
     try {
@@ -580,7 +582,6 @@ function doLiveSearchPage(ctrl){
         }
     });
 }
-
 function preChangeImage(ctrl){
     let page = $(ctrl).attr('data-page');
     let code = $(ctrl).attr('data-code');
@@ -595,6 +596,34 @@ function preChangeImage(ctrl){
         success: function(response) {
             if(response.status == 'success'){
               
+            }else{
+                notyf.error(response.msg);
+            }
+        }
+    });
+}
+function showRightbar(ctrl){
+    let tab_id = $(ctrl).attr('data-tab_id');
+    initializingTL.TLCallNavBar(render_prefix,tab_id)
+}
+function settingTableList(ctrl){
+    let page_id = $(ctrl).attr('data-table_id');
+    let field_id = $(ctrl).attr('data-field_id');
+    let field_name = $(ctrl).attr('data-list_name');
+    let value = $(ctrl).val() ;
+    let data ={
+        page_id : page_id,
+        field_id : field_id,
+        field_name : field_name,
+        value : value
+    }
+    $.ajax({
+        type: "POST",
+        url: "/system/update-table-list",
+        data: data,
+        success: function (response) {
+            if(response.status == 'success'){
+                notyf.success(response.msg);
             }else{
                 notyf.error(response.msg);
             }

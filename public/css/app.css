@@ -388,7 +388,7 @@ body[data-layout=horizontal] .footer {
   position: fixed;
   -webkit-transition: all 200ms ease-out;
   transition: all 200ms ease-out;
-  width: 280px;
+  width: 1000px;
   z-index: 9999;
   float: left !important;
   left: -290px;

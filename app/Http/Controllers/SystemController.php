@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Exception;
 use App\MainSystem\system;
+use App\MainSystem\systemEnumStatus;
 use App\Models\CustomerModels;
 use App\Models\MenuModels;
 use App\Models\TablesModel;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\UseSetupModel;
 use App\Models\NotificationModel;
 use App\Models\SystemModel;
+use App\Models\TableFieldModel;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -86,7 +88,6 @@ class SystemController extends Controller
             return response()->json(['status'=> 'error' ,'msg' => $ex->getMessage()]);
         }
     }
-
     public function getSubDirectories($dir)
     {
         $subDir = [];
@@ -101,11 +102,9 @@ class SystemController extends Controller
         $finalArrays = array_flatten($subDir);
         return $finalArrays;
     }
-
     public function getFileInFolder($dir) {
         return glob($dir);
     }
-
     public function showNotification(){
         try{
             $records = NotificationModel::where('is_read','no')->orderBy('created_at')->limit(20)->get();
@@ -115,7 +114,6 @@ class SystemController extends Controller
             return response()->json(['status' => 'warning', 'msg' => $ex]) ;
         }
     }
-
     public function getTelegramID(Request $request){
         try{
             $bot_api = "https://api.telegram.org";
@@ -140,7 +138,6 @@ class SystemController extends Controller
             return response()->json(['status' => 'warning', 'msg' => $ex]) ;
         }
     }
-
     public function update2FA(Request $request){
         try{
             $data = $request->all() ;
@@ -155,7 +152,6 @@ class SystemController extends Controller
             return response()->json(['status' => 'warning', 'msg' => $ex]) ;
         }
     }
-
     public function preUploadImage(Request $request){
         try{
             $data = $request->all() ;
@@ -180,7 +176,6 @@ class SystemController extends Controller
             return response()->json(['status' => 'warning' ,'msg' => $ex->getMessage()]);
         }
     }
-
     public function UploadImage(Request $request,$page,$code){
         try{
            $record = $this->system->getRecordByPageNameAndPrimarykey($page,$code);
@@ -216,7 +211,6 @@ class SystemController extends Controller
             return response()->json(['status' => 'warning' ,'msg' => $ex->getMessage()]);
         }
     }
-
     public function liveSearchPage(Request $request){
         $data = $request->all();
         // dd($data)   ;
@@ -227,6 +221,52 @@ class SystemController extends Controller
         })->get();
         $view = view('admin.component.template.list_page_search',['record' => $record])->render();
         return response()->json(['status' => 'success' , 'view' => $view]);
+    }
+    public function callNavBar(Request $request){
+        try{
+            $data = $request->all();
+            $table_name = trim($data['page']);
+            $tap_id = $data['tab_ids'];
+            if(!$table_name) return response()->json(['status' => 'warning', 'msg' => 'Table Not found']) ; 
+            $table_field = TableFieldModel::where('table_name',$table_name)->get();
+            if(count($table_field) <= 0) return response()->json(['status' => 'warning', 'msg' => 'Please build or Compile table first !']) ; 
+            if($tap_id == '' || !$tap_id) $tap_id = 1;
+            switch($tap_id){
+                case 1 :
+                    $params = [
+                        'table_field' => $table_field,
+                    ];
+                    $view = view('admin.component.template.fill-tabpanel-0',$params)->render() ;
+                    return response()->json(['status' => 'success' ,'view' => $view]);
+                    break ;
+                default :
+                    return response()->json(['status' => 'warning' ,'msg' => 'Something went wrong !']) ;
+                    break ;
+
+            }
+        }catch(Exception $ex){
+            return response()->json(['status' => 'warning', 'msg' => $ex->getMessage()]) ;
+        }
+    }
+    public function changeTableField(Request $request){
+        DB::beginTransaction();
+        try{
+            $data = $request->all();
+            $page_id = $data['page_id'];
+            $field_id = $data['field_id'];
+            $name = $data['field_name'];
+            $value = removeDataSpace($data['value']);
+            $record = TableFieldModel::where('table_id',$page_id)->where('field_id',$field_id)->first() ;
+            if(!$record) return response()->json(['status' => 'warning' ,'msg' => systemEnumStatus::Notfound]);
+            $record->$name = $value;
+            $record->save();
+            DB::commit();
+
+            return response()->json(['status' => 'success','msg' => systemEnumStatus::SaveSuccess]);
+        }catch(Exception $ex){
+            DB::rollBack();
+            return response()->json(['status' => 'warning', 'msg' => $ex->getMessage()]) ;
+        }
     }
 
 }

@@ -375,7 +375,6 @@ class ItemsController extends Controller
                 'page_url' => $this->page_url ,
                 'record' => App\Models\ItemsModels::where($this->primary_key,$code)->first(),
             ];
-            // dd(App\Models\ItemsModels::where($this->primary_key,$code)->first()) ;
             return view($this->blade_card, $param);
         }catch (\Exception $ex) {
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
@@ -389,9 +388,7 @@ class ItemsController extends Controller
             $data = $request->all() ;
             $item_code = $data['code'];
             $item = ItemsModels::where('no',$item_code)->first() ;
-            
             $view = view('admin.items.publish_to_ecom_modal');
-            dd($item_code) ;
         }catch (\Exception $ex) {
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }
