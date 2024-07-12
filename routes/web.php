@@ -6,9 +6,9 @@
     use App\Http\Controllers\TablesController;
     use Illuminate\Support\Facades\Route;
 
-    Route::get('/', function () {
-        return view('welcome');
-    });
+    // Route::get('/', function () {
+    //     return view('welcome');
+    // });
     // Authentication For system
     Route::get('/login', [LoginController::class, 'index']);
     Route::post('/doLogin', [LoginController::class, 'doLogin'])->name('doLogin');

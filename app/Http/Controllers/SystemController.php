@@ -239,6 +239,11 @@ class SystemController extends Controller
                     $view = view('admin.component.template.fill-tabpanel-0',$params)->render() ;
                     return response()->json(['status' => 'success' ,'view' => $view]);
                     break ;
+                case 2 :
+                        $page_id = 
+                        $view = view('admin.component.template.fill-tabpanel-1')->render() ;
+                        return response()->json(['status' => 'success' ,'view' => $view]);
+                        break ;
                 default :
                     return response()->json(['status' => 'warning' ,'msg' => 'Something went wrong !']) ;
                     break ;

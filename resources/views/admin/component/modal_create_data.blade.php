@@ -7,7 +7,7 @@
         border-left: 5px solid #125deb ;
     }
 </style>
-<div class="modal-dialog {{$modal_size}}" role="dialog">
+<div class="modal-dialog {{$modal_size}} modal-dialog-centered" role="dialog">
     <div class="modal-content ">
         <div class="modal-header" style="background: #eef2ff;">
             @if(isset($record))

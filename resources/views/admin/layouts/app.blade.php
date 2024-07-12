@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="push_key" content="{{ env('PUSHER_APP_KEY') }}" />
     <meta name="render_prefix" content="{{ $prefix ?? '' }}" />
+    <meta name="page_id" content="{{ $page_id ?? '' }}" />
     <title>@yield('title')</title>
     <link href="{{ asset('css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />

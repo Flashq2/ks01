@@ -2,6 +2,8 @@ const pusher_key = $(document).find('meta[name="push_key"]').attr("content");
 const render_prefix = $(document)
     .find('meta[name="render_prefix"]')
     .attr("content");
+const page_id = $(document).find('meta[name="page_id"]')
+.attr("content");
 var pusher = new Pusher(pusher_key, {
     cluster: "ap1",
 });

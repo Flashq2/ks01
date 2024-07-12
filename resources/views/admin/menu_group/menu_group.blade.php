@@ -87,7 +87,7 @@
     <script>
         const prefix = "{{ $prefix }}";
         $(document).ready(function() {
-            $(".table").tableFixer({"head" : false, "left" : 1}); 
+            $("#tableRecord").tableFixer({"left" : 1}); 
             initializingTL.TLSelect2('inactived');
             $(document).on('click', '.m-confirm-submit', function(e) {
                 let code = $(this).data('code');

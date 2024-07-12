@@ -16,7 +16,7 @@
             @include('admin.component.list_record')
         @empty
             <tr> <td class="text-center" colspan="{{ count($fields) + 1 }}">No Record Found</td></tr>
-        @endforelse
+        @endforelNse
     </tbody>
 </table>
 @if (!isset($excel)) {{ $records->links('pagination::bootstrap-5') }} @endif
