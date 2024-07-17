@@ -3682,7 +3682,7 @@ header.version_2 .menu ul li ul li ul {
 .owl-theme .owl-dots .owl-dot {
   display: inline-block;
   zoom: 1;
-  *display: inline;
+  display: inline;
 }
 
 .owl-theme .owl-dots .owl-dot span {
@@ -4628,6 +4628,7 @@ body.modal-open .mm-slideout {
   display: block;
 }
 .grid_item figure {
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
   -moz-transition: all 0.7s ease;
@@ -5157,6 +5158,7 @@ input.qty2:focus {
 }
 
 .ribbon {
+  border-radius: 5px;
   color: #fff;
   display: inline-block;
   font-size: 11px;
