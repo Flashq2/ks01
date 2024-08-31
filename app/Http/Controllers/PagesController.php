@@ -211,7 +211,7 @@ class PagesController extends Controller
         $current_template = file_get_contents($view_template);
         $blade_need_to = $path.'/'.$table_name.'/'.$table_name.'.blade.php';
         if(!is_dir($path.'/'.$table_name)) mkdir($path.'/'.$table_name, 0775, true); // Create Dir
-        if(!file_exists($blade_need_to))  $createfile = fopen($blade_need_to, 'x'); // Create blade template 
+        if(!file_exists($blade_need_to))  fopen($blade_need_to, 'x'); // Create blade template 
         $fp = fopen($blade_need_to, 'w');
         fwrite($fp, $current_template);
         fclose($fp);
@@ -221,7 +221,7 @@ class PagesController extends Controller
             $current_template = file_get_contents($view_template);
             $blade_need_to = $path.'/'.$table_name.'/'.$table_name.'_card.blade.php';
             if(!is_dir($path.'/'.$table_name)) mkdir($path.'/'.$table_name, 0775, true); // Create Dir
-            if(!file_exists($blade_need_to))  $createfile = fopen($blade_need_to, 'x'); // Create blade template 
+            if(!file_exists($blade_need_to))   fopen($blade_need_to, 'x'); // Create blade template 
             $fp = fopen($blade_need_to, 'w');
             fwrite($fp, $current_template);
             fclose($fp);

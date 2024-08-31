@@ -14,6 +14,8 @@
         <link href="{{ asset('css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+        <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
+
     </head>
     <style>
         .background{
@@ -50,39 +52,12 @@
                                                Incorrect email or password!, Please try again.
                                             </div>
                                          @endif
-                                        
-                                        <form class="form-horizontal mt-4" action="{{route('doLogin')}}" method="POST">
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="email">Email</label>
-                                                <input type="text" class="form-control" id="email" placeholder="Enter username" name="email">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="password">Password</label>
-                                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
-                                            </div>
-                                            <div class="mb-3 row mt-4">
-                                                <div class="col-6">
-                                                    {{-- <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" id="customControlInline">
-                                                        <label class="form-check-label" for="customControlInline">Remember me
-                                                        </label>
-                                                    </div> --}}
-                                                </div>
-                                                <div class="col-6 text-end">
-                                                    <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Log In</button>
-                                                </div>
-                                            </div>
-                                            <div class="form-group mb-0 row">
-                                                <div class="col-12 mt-4">
-                                                    <a href="pages-recoverpw.html" class="text-muted"><i class="mdi mdi-lock"></i> Forgot your password?</a>
-                                                </div>
-                                            </div>
-                                        </form>
+                                         <div class="card mt-5 p-3">
+                                            <div id="otp_target"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -91,14 +66,55 @@
        
 
         <!-- JAVASCRIPT -->
-        <script src="{{ asset('js/root/main.js') }}"></script>
-        <script src="{{ asset('js/root/main_ui.js') }}"></script>
+        <script src="{{ asset('libs/jquery/jquery.min.js') }}"></script>
+
+        <script src="{{ asset('libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('libs/metismenu/metisMenu.min.js') }}"></script>
+        <script src="{{ asset('libs/simplebar/simplebar.min.js') }}"></script>
+        <script src="{{ asset('libs/node-waves/waves.min.js') }}"></script>
+        <script src="{{ asset('libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
+        </script>
+        <!--Morris Chart-->
+        <script src="{{ asset('libs/morris.js/morris.min.js') }}"></script>
+        <script src="{{ asset('libs/raphael/raphael.min.js') }}"></script>
+        <script src="{{ asset('js/pages/dashboard.init.js') }}"></script>
+    
+        <script src="{{ asset('js/pages/select2.js') }}"></script>
+        <script src="{{ asset('js/pages/datetime_picker.js') }}"></script>
         <script src="{{ asset('js/addon/printThis.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
         <script src="{{ asset('js/addon/ladda.js') }}"></script>
         <script src="{{ asset('js/addon/spin.js') }}"></script>   
         <script src="{{ asset('js/addon/table_fixer.js') }}"></script>    
+        <script src="{{ asset('libs/sweetalert2/sweetalert2.all.min.js')}}"></script>
+        <script src="{{ asset('libs/tinymce/tinymce.min.js')}}"></script>
+        <script src="{{ asset('js/root/main.js') }}"></script>
+        <script src="{{ asset('js/root/main_ui.js') }}"></script> 
+        <script src="https://cdn.jsdelivr.net/gh/HichemTab-tech/OTP-designer-jquery@2.3.0/dist/otpdesigner.min.js"></script>
 
-        <script src="{{ asset('js/app.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#otp_target').otpdesigner({
+                    typingDone: function (code) {
+                        console.log('Entered OTP code: ' + code);
+                    },
+                });
+
+                function submitOtpCode(code){
+                    
+                }
+
+                // $('#ok').on('click', function () {
+                //     let result = $('#otp_target').otpdesigner('code');
+                //     if (result.done) {
+                //         alert('Entered OTP code: ' + result.code);
+                //     } else {
+                //         alert('Typing incomplete!');
+                //     }
+                // });
+            });
+        </script>
 
     </body>
 

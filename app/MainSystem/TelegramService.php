@@ -1,14 +1,9 @@
 <?php
+namespace App\MainSystem;
 
 use Illuminate\Support\Facades\Auth;
 
-enum MyReturnMessageCase {
-    case InvalidMethod;
-    case InvalidProperty;
-    case Timeout;
-};
-
-abstract class TelegramService{
+ class TelegramService{
     protected $telegram_id = '';
     protected $telegram_token = '' ;
     protected $account_token =   '' ;
@@ -26,7 +21,7 @@ abstract class TelegramService{
         ======================== Do not change every line of code in this function ===============
         @param 
     */
-    public static function sendMessage($param,$type,$data){
+    public static function sendMessage($param,$type='SMS',$data = '',$user = ''){
         $url = self::$telegram_url ;
         $text = '';
         $apiUri = sprintf('%s/bot%s/%s', self::$telegram_url, self::$account_token, 'sendMessage');
@@ -38,6 +33,7 @@ abstract class TelegramService{
         $headers = [
             'Content-Type: application/json'
         ];
+        self::initTelegramConnection($apiUri,$headers,$params);
     }
 
     /* 

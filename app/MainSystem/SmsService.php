@@ -28,7 +28,7 @@ namespace App\MainSystem;
             $phone_no = str_replace('+','',$user->phone_no) ;
             $params = array(
                 'sender' => 'SMS Info',
-                'to' => '85592390212',
+                'to' => $phone_no,
                 'content' => $content['content'],
                 'username' => $json_data->account_email,
                 'password' => $json_data->account_password,

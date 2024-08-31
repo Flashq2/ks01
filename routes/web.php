@@ -12,6 +12,7 @@
     // Authentication For system
     Route::get('/login', [LoginController::class, 'index']);
     Route::post('/doLogin', [LoginController::class, 'doLogin'])->name('doLogin');
+    Route::get('/verfication-opt', [LoginController::class, 'getOtpcode'])->name('verfication-opt');
 
     // End Authentication 
 
