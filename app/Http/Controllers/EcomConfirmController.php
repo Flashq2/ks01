@@ -26,11 +26,24 @@ class EcomConfirmController extends Controller
  
     public function confirm_order(Request $request){
         $random_code = $this->randomOTPCode(6);
-        $user_id = Auth::user()->id;
-        
-        TempSaleLine::where("header_id",$user_id)->update(['status' => 'Comfirm']);
-        TempSaleHeader::where("user_id",$user_id)->update(['status' => 'Comfirm']);
-       return view('client.success',compact('random_code'));
+ 
+       return view('client.comfirm',compact('random_code'));
+    }
+    public function search(Request $request){
+        $user = Auth::user();
+        $user_id = $request->input('code');
+        $header = TempSaleHeader::where('comfirm_code',$user_id)->first() ;
+        if(!$header) return response()->json(['status' => 'warning' ,'msg' => "Document Not found"]);
+        $order = TempSaleLine::where('header_id',$user_id)->where('status',"Comfirm")->get();
+        $items = $order->pluck("item_no");
+        $items = ItemsModels::whereIn("no",$items)->get() ;
+        $record = [
+            'user' => $user,
+            'order'  => $order,
+            'items' => $items
+        ];
+        $view = view('client.comfirm_card',$record)->render();
+       return response()->json(['status' => 'success' ,'view' => $view]);
     }
 
     public function randomOTPCode($digit){

@@ -95,7 +95,7 @@ class EcomIndexController extends Controller
         $user_id = Auth::user()->id;
         
         TempSaleLine::where("header_id",$user_id)->update(['status' => 'Comfirm']);
-        TempSaleHeader::where("user_id",$user_id)->update(['status' => 'Comfirm']);
+        TempSaleHeader::where("user_id",$user_id)->update(['status' => 'Comfirm','comfirm_code' => $random_code]);
        return view('client.success',compact('random_code'));
     }
 

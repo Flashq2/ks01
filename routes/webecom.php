@@ -12,6 +12,7 @@ Route::post('/success',[EcomIndexController::class,'success','middleware' => 'se
 
 Route::group(['prefix' => 'admin', 'middleware' => 'setec'], function () { // Admin dashboard
     Route::controller(EcomConfirmController::class)->group(function () {
-        Route::get('dashboard', 'index');
+        Route::get('comfirm-order', 'confirm_order');
+        Route::get('comfirm-order/search', 'search');
     });
 });
