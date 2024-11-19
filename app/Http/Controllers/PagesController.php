@@ -109,7 +109,7 @@ class PagesController extends Controller
             return response()->json(['status' => 'success' ,'msg' => 'Table Create sucessfully ']) ;
 
         }catch(Exception $ex){
-            dd($ex) ;
+            dd($ex->getMessage()) ;
         }
     }
 

@@ -7,33 +7,35 @@ use App\Jobs\JobAttemLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\MainSystem\SmsService as GlobalSmsService;
-use App\MainSystem\system as MainSystemSystem;
+use App\MainSystem\system;
 use App\Models\TwoFactorAuth;
 use App\Models\UserLoginHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use PHPUnit\Event\Telemetry\System;
 use App\MainSystem\TelegramService;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Session as FacadesSession;
 use Mockery\Expectation;
 
 class LoginController extends Controller
     
 {
     protected $sms_service = '' ;
-    protected $system = '' ;
+    public $system = '' ;
     protected $telegram_service = '' ;
     protected $verifiaction_code_page = '' ;
 
     function __construct()
     {
         $this->sms_service = new GlobalSmsService();
-        $this->system = new MainSystemSystem();
+        $this->system = new system();
         $this->telegram_service = new TelegramService() ;
         $this->verifiaction_code_page = 'admin.auth.two_factor_auth';
     }
     public function index(){
         try{
+
             return view('admin.auth.pages-login');
         }catch(Exception $ex){
             return 'Something went wrong' ;
@@ -57,28 +59,31 @@ class LoginController extends Controller
                 $user_histroy->login_datetime = Carbon::now()->toDateTimeString() ;
                 $user_histroy->save() ;
                 // Create Two Factor Auth 
-                if($user->two_factor == 'Yes'){
-                    $otp_result = 1111   ;
-                    // if($user->two_factor_type == 'SMS') $otp_result = $this->sendOTPcode($user) ;
-                    // else $otp_result = $this->sendOTPCodeToTelegram($user);
+                // if($user->two_factor == 'Yes'){
+                //     $otp_result = 1111   ;
+                //     // if($user->two_factor_type == 'SMS') $otp_result = $this->sendOTPcode($user) ;
+                //     // else $otp_result = $this->sendOTPCodeToTelegram($user);
                     
-                    $two_factor = new TwoFactorAuth();
-                    $two_factor->otp_code = $otp_result['random_code'] ;
-                    $two_factor->email = Auth::user()->email;
-                    $two_factor->provider = 'SMS info';
-                    $two_factor->request_datetime = Carbon::now()->toDateString();
-                    $two_factor->ending_datetime = Carbon::now()->toDateTimeString();
-                    $two_factor->save() ;
-                    DB::commit() ;
-                    $user_email = encryptHelper($user->emai);
-                    $password = encryptHelper($data['password']);
-                    $data = [
-                        'user_email' => $user_email,
-                        'password' => $password
-                    ];
-                    return view($this->verifiaction_code_page,$data);
-                }
+                //     $two_factor = new TwoFactorAuth();
+                //     // $two_factor->otp_code = $otp_result['random_code'] ;
+                //     $two_factor->email = Auth::user()->email;
+                //     $two_factor->provider = 'SMS info';
+                //     $two_factor->request_datetime = Carbon::now()->toDateString();
+                //     $two_factor->ending_datetime = Carbon::now()->toDateTimeString();
+                //     $two_factor->save() ;
+                //     DB::commit() ;
+                //     $user_email = encryptHelper($user->emai);
+                //     $password = encryptHelper($data['password']);
+                //     $data = [
+                //         'user_email' => $user_email,
+                //         'password' => $password
+                //     ];
+                //     return view($this->verifiaction_code_page,$data);
+                // }
                 DB::commit() ;
+                if(Auth::user()->role != 'User'){
+                    return redirect('/');
+                }
                 return redirect('/admin/dashboard');
                 
             }
@@ -89,7 +94,7 @@ class LoginController extends Controller
         }catch(Exception $ex){
             Auth::logout();
             DB::rollback();
-            return response()->json(['status' => 'warning' , 'msg' => $ex]) ;
+            return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]) ;
         }
     }
         /* 
@@ -101,12 +106,12 @@ class LoginController extends Controller
         */
 
     function sendOTPcode($user){
-        $random_code = $this->system->randomOTPCode(6);
+        $random_code = $this->system::randomOTPCode(6);
         $data = [
             'sender' => 'SMS Info', // Any provide is we already resister, But i think it no need to change
             'content' => "Hello, $user->name \n Here is your verification code for our system \n Verification code : $random_code"
         ];
-        $result = $this->sms_service->PostSMS($data,$user);
+        $result = $this->sms_service::PostSMS($data,$user);
         
         return ['random_code' => $random_code,'result' => $result] ;
 
@@ -119,11 +124,11 @@ class LoginController extends Controller
         -- Return Type: Array of collection ----
     */
     function sendOTPCodeToTelegram ($user){
-        $random_code = $this->system->randomOTPCode(6);
+        $random_code = $this->system::randomOTPCode(6);
         $data = [
             'content' => "Hello, $user->name \n Here is your verification code for our system \n Verification code : $random_code",
         ];
-        $result = $this->telegram_service->sendMessage($data,'SMS','',$user);
+        $result = $this->telegram_service::sendMessage($data,'SMS','',$user);
         return ['random_code' => $random_code,'result' => $result] ;
     }
     // Return Verification code ... [U can add some variable for return to client]  
@@ -168,5 +173,11 @@ class LoginController extends Controller
         }catch(Exception $ex){
             return response()->json(['status' => 'warning' ,'msg' => $ex->getMessage()]);
         }
+    }
+
+    public function logout(){
+        Auth::logout();
+        FacadesSession::flush();
+        return redirect()->back();
     }
 }

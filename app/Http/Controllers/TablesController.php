@@ -120,11 +120,11 @@ class TablesController extends Controller
                     {
                         $new->field_type = 'decimal';
                     }else{
-                        if(count($specail_type) > 0 ){
+                        if($specail_type[0] != ""){
                             if($specail_type[0] == 'option'){
                                 $new->field_type = 'option';
                                 $new->option_value  = $specail_type[1] ;
-                            }elseif($specail_type[0] == 'select2'){
+                            }elseif($specail_type[0] == 'select'){
                                 $new->field_type = 'select2';
                                 $new->table_relate = $specail_type[1];
                                 $new->table_code_relate = $specail_type[2];
@@ -184,7 +184,6 @@ class TablesController extends Controller
             $view = '';
             return response()->json(['status'=>'success','msg' =>'Table Build Successfuly','view'=>$view]);
         }catch(Exception $ex){
-            dd($ex) ;
             DB::rollBack();
             return response()->json(['status' => 'warning' , 'msg' => $ex->getMessage()]);
         }

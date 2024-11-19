@@ -1,7 +1,8 @@
     <?php
 
     use App\Http\Controllers\AdminDashboardController;
-    use App\Http\Controllers\LoginController;
+use App\Http\Controllers\EcomIndexController;
+use App\Http\Controllers\LoginController;
     use App\Http\Controllers\SystemController;
     use App\Http\Controllers\TablesController;
     use Illuminate\Support\Facades\Route;
@@ -11,11 +12,16 @@
     // });
     // Authentication For system
     Route::get('/login', [LoginController::class, 'index']);
+    Route::get('/logout', [LoginController::class, 'logout']);
     Route::post('/doLogin', [LoginController::class, 'doLogin'])->name('doLogin');
     Route::get('/verfication-opt', [LoginController::class, 'getOtpcode'])->name('verfication-opt');
 
     // End Authentication 
 
+    // Eorder 
+
+
+    Route::post('/add-to-card', [EcomIndexController::class, 'addToCard']);
 
 
     //  Begin Admin Routs 
@@ -28,18 +34,18 @@
             Route::get('pre-upload-image', 'preUploadImage');
             Route::post('UploadImage/{page}/{primary}', 'UploadImage');
             Route::get('/search-page', 'liveSearchPage');
-            Route::get('call-navbar','callNavBar');
-            Route::post('update-table-list','changeTableField');
+            Route::get('call-navbar', 'callNavBar');
+            Route::post('update-table-list', 'changeTableField');
         });
     });
 
-    Route::group(['prefix' => 'admin'], function () { // Admin dashboard
+    Route::group(['prefix' => 'admin', 'middleware' => 'setec'], function () { // Admin dashboard
         Route::controller(AdminDashboardController::class)->group(function () {
             Route::get('dashboard', 'index');
         });
     });
 
-    Route::group(['prefix' => 'tables','middleware' => 'setec'], function () { // tables
+    Route::group(['prefix' => 'tables', 'middleware' => 'setec'], function () { // tables
         Route::controller(TablesController::class)->group(function () {
             Route::get('', 'index');
             Route::post('/create-data', 'createData');
@@ -271,7 +277,7 @@
         });
     });
 
-    Route::group(['prefix' => 'items'], function () {
+    Route::group(['prefix' => 'items', 'middleware' => 'setec'], function () {
         Route::controller(App\Http\Controllers\ItemsController::class)->group(function () {
             Route::get('', 'index');
             Route::post('/create-data', 'createData');
@@ -284,9 +290,92 @@
             Route::get('/export-excel/{table}', 'downLoadExcel');
             Route::get('/print-pdf/{table}', 'printPDF');
             Route::post('/upload-excel', 'ImportExcel');
-            Route::get('/items_card', 'transaction'); 
+            Route::get('/items_card', 'transaction');
 
             // Ad-on custome
-            Route::get('/pre-publish-item','prePublishItem');
+            Route::get('/pre-publish-item', 'prePublishItem');
+        });
+    });
+
+    Route::group(['prefix' => 'ecom_item_detail', 'middleware' => 'ecom'], function () {
+        Route::controller(App\Http\Controllers\EcomItemDetailController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
+
+            Route::get('/ecom_item_detail_card', 'transaction');
+        });
+    });
+    Route::group(['prefix' => 'ecom_item_detail', 'middleware' => 'ecom'], function () {
+        Route::controller(App\Http\Controllers\EcomItemDetailController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
+
+            Route::get('/ecom_item_detail_card', 'transaction');
+        });
+    });
+     
+    Route::group(['prefix' => 'merchant', 'middleware' => 'ecom'], function () {
+        Route::controller(App\Http\Controllers\MerchatController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
+
+            Route::get('/merchat_card', 'transaction');
+        });
+    });
+    Route::group(['prefix' => 'item_group'], function () {
+        Route::controller(App\Http\Controllers\ItemGroupController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
+        });
+    });
+    Route::group(['prefix' => 'item_category'], function () {
+        Route::controller(App\Http\Controllers\ItemCategoryController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/create-data', 'createData');
+            Route::post('/delete-table', 'build');
+            Route::post('/edit-data', 'editData');
+            Route::post('/submit-data', 'submitData');
+            Route::post('/delete-data', 'deleteData');
+            Route::get('/ajax-paginate', 'ajaxPagination');
+            Route::get('/search', 'search');
+            Route::get('/export-excel/{table}', 'downLoadExcel');
+            Route::get('/print-pdf/{table}', 'printPDF');
+            Route::post('/upload-excel', 'ImportExcel');
         });
     });

@@ -8,5 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerModels extends Model
 {
     protected $table = 'customer' ;
+    protected $primaryKey = 'code';
+    public $incrementing = false;
     use HasFactory;
 }

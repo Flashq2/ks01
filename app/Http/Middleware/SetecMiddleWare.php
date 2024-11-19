@@ -19,12 +19,13 @@ class SetecMiddleWare
     public function handle(Request $request, Closure $next): Response
     {
         if(Auth::check()){
+            if(Auth::user()->role != "User") return redirect('/login');
             $user_setup = UseSetupModel::where('email',Auth::user()->email)->first() ;
             Auth::user()->user_setup = $user_setup ;
             
             return $next($request);
         }else {
-            return redirect('/login');
+          return redirect('/login');
         }
     }
 }

@@ -4,7 +4,7 @@
             <div class="col-sm-12">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> Pok Puthea</span>
+                </script>Eorder</span>
             </div>
         </div>
     </div>

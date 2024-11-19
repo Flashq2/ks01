@@ -81,7 +81,6 @@
             border-radius: 50%;
 
         }
-
         .table_list_imge img {
             width: 100%;
             height: 100%;

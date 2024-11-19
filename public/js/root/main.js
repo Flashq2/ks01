@@ -12,6 +12,7 @@ var notyf = new Notyf({
 });
 
 $(document).ready(function () {
+    initializingTL.TLinitSelect2("select3");
     var channel = pusher.subscribe("init_realtime_data");
     initializingTL.TLSelect2LiveSearch(
         "system/select2-live-search",

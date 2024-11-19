@@ -215,7 +215,6 @@ class CustomerController extends Controller
             ];
 
             $view = view('admin.component.table_list', $param)->render();
-            // dd($view) ;
             return response()->json(['status' => 'success', 'view' => $view]);
         } catch (Exception $ex) {
             return response()->json(['status' => 'warning', 'msg' => $ex]);

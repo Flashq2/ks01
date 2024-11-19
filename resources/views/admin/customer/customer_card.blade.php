@@ -35,7 +35,7 @@
                                             
                                         </div>
                                         </div>
-                                    @include('admin.component.action.button_upload_image',['page' => 'Customer' ,'primary_key' => $record['id']])
+                                    @include('admin.component.action.button_upload_image',['page' => 'Customer' ,'primary_key' => $record['code']])
                                 </div>
                             </div>
                             <div class="col-9">

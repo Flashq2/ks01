@@ -57,7 +57,6 @@ class system{
     public static function getField($table_id){
        
         $record = TableFieldModel::where('table_id',$table_id)
-        // ->where('email',Auth::user()->email)
         ->where('hide','<>','yes')
         ->orderBy('list_order')
         ->get();
